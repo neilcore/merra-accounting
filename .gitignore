@@ -1,24 +1,62 @@
-# Compiled class file
+# Compiled class files
 *.class
 
-# Log file
+# Maven build directory and temporary files
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# Log files
 *.log
+logs/
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+# Package files
+# For multi-module projects, these are typically generated in the target/ directory
+# which is already ignored. However, keeping them here can be a good practice for
+# single-module projects or specific use cases.
 *.jar
+*.jar.original
 *.war
-*.nar
 *.ear
 *.zip
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# IDE and Editor files
+.idea/
+.project
+.classpath
+.settings/
+.vscode/
+*.swp
+*.iml
+*.iws
+.DS_Store
+
+# Eclipse-specific files
+.factorypath
+
+# Maven Daemon configuration
+merra-accounting/commons/.mvn/*.config
+merra-accounting/main/.mvn/*.config
+merra-accounting/user/.mvn/*.config
+
+# Spring Boot specific
+# The .spring.profiles.active file is often used for local development
+.spring.profiles.active
+
+# Virtual machine crash logs
 hs_err_pid*
 replay_pid*
+
+# Others
+.gitignore
+.gitattributes
