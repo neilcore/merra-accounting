@@ -1,4 +1,5 @@
 # MERRA accounting software
+#### The backend project for merra.
 > [!WARNING]
 > This software is unfinished. Keep your expectations low.
 
