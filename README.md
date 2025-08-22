@@ -1,2 +1,4 @@
-# merra-accounting
-MERRA is an accounting software
+# MERRA accounting software
+> [!WARNING]
+> This software is unfinished. Keep your expectations low.
+The project aims to make a tool for creating simplified financial management tasks.
