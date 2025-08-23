@@ -89,7 +89,10 @@ public class OrganizationService {
 	 */
 	private OrganizationDetailsResponse save(Organization organization) {
 		Organization newOrganization = organizationRepository.save(organization);
+		// create organization's default settings
 		this.createOrganizationSettings(organization);
+		// create organization's default ledger accounts
+		accountService.createDefaultAccounts(newOrganization);
 		
 		return organizationMapper.toOrganizationResponse(newOrganization);
 	}
@@ -102,7 +105,7 @@ public class OrganizationService {
 	@Transactional
 	public OrganizationDetailsResponse createNewOrganizationObject(CreateOrganizationRequest data) {
 		Organization org = getOrganizationObject(null); // New organization object
-		// For now set this as organization's profile picture
+		// TODO - For now set this as organization's profile picture
 		org.setProfileImage("sample_image_url");
 		
 		// Set organization basic information

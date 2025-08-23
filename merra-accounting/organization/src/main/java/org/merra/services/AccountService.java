@@ -22,6 +22,9 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * This class will handle the chart of accounts
+ */
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -48,8 +51,7 @@ public class AccountService {
 	
 	
 	@Transactional
-	public void createDefaultAccounts(@NotNull UUID organizationId) {
-		Organization getOrganization = organizationRepository.findById(organizationId).get();
+	public void createDefaultAccounts(@NotNull Organization org) {
 		
 		// Account categories
 		AccountCategory assetCat = accountCategoryRepository.findById(AccountCategoryRepository.assetId).get();
@@ -61,7 +63,7 @@ public class AccountService {
 		// Create asset accounts
 		AccountType currentAsset = accountTypeRepository.save(new AccountType("Current Asset", ""));
 		Account accountReceivable = new Account(
-				getOrganization,
+				org,
 				"100",
 				"Receivable Account",
 				currentAsset,
@@ -70,7 +72,7 @@ public class AccountService {
 		accountReceivable.setDescription("Money owed to the busines.");
 		
 		Account preparedExpense = new Account(
-				getOrganization,
+				org,
 				"103",
 				"Prepared Expenses",
 				currentAsset,
@@ -80,7 +82,7 @@ public class AccountService {
 		
 		AccountType inventoryType = accountTypeRepository.save(new AccountType("Inventory", ""));
 		Account inventoryAssetAccount = new Account(
-				getOrganization,
+				org,
 				"101",
 				"Inventory",
 				inventoryType,
@@ -90,7 +92,7 @@ public class AccountService {
 		
 		AccountType fixedAssetType = accountTypeRepository.save(new AccountType("Fixed Assets", ""));
 		Account fixedAssetAccount = new Account(
-				getOrganization,
+				org,
 				"102",
 				"Fixed Asset",
 				fixedAssetType,
@@ -103,7 +105,7 @@ public class AccountService {
 		// Create liability accounts
 		AccountType currentLiabilityType = accountTypeRepository.save(new AccountType("Current Liability", ""));
 		Account accountPayable = new Account(
-				getOrganization,
+				org,
 				"300",
 				"Payable Account",
 				currentLiabilityType,
@@ -113,7 +115,7 @@ public class AccountService {
 		
 		AccountType liabilityType = accountTypeRepository.save(new AccountType("Liability", ""));
 		Account loans = new Account(
-				getOrganization,
+				org,
 				"302",
 				"Loans Payable",
 				liabilityType,
@@ -126,7 +128,7 @@ public class AccountService {
 		// Create Equity accounts
 		AccountType equityType = accountTypeRepository.save(new AccountType("Equity", ""));
 		Account annualEarning = new Account(
-				getOrganization,
+				org,
 				"600",
 				"Retained Earnings",
 				equityType,
@@ -135,7 +137,7 @@ public class AccountService {
 		annualEarning.setDescription("Profits retained in the busines.");
 		
 		Account ownersDrawing = new Account(
-				getOrganization,
+				org,
 				"601",
 				"Owner’s Drawings",
 				equityType,
@@ -148,7 +150,7 @@ public class AccountService {
 		// Create revenue accounts
 		AccountType revenueType = accountTypeRepository.save(new AccountType("Revenue", ""));
 		Account salesRevenueAcc = new Account(
-				getOrganization,
+				org,
 				"200",
 				"Sales Revenue",
 				revenueType,
@@ -157,7 +159,7 @@ public class AccountService {
 		salesRevenueAcc.setDescription("Income from core operations.");
 		
 		Account serviceIncomeAcc = new Account(
-				getOrganization,
+				org,
 				"201",
 				"Service Income",
 				revenueType,
@@ -170,7 +172,7 @@ public class AccountService {
 		// Create expenses accounts
 		AccountType expenseType = accountTypeRepository.save(new AccountType("Expense", ""));
 		Account officeExpenses = new Account(
-				getOrganization,
+				org,
 				"300",
 				"Office Expenses",
 				expenseType,
@@ -179,7 +181,7 @@ public class AccountService {
 		officeExpenses.setDescription("Costs that a business incurs for the day-to-day operation and maintenance of its workspace.");
 		
 		Account advertisingExpenses = new Account(
-				getOrganization,
+				org,
 				"301",
 				"Marketing Expense",
 				expenseType,
@@ -188,7 +190,7 @@ public class AccountService {
 		advertisingExpenses.setDescription("Costs a business incurs to promote its products, services, or brand to a target audience.");
 		
 		Account consultingAndAccountingExpenses = new Account(
-				getOrganization,
+				org,
 				"302",
 				"Consulting & Accounting",
 				expenseType,
@@ -198,7 +200,7 @@ public class AccountService {
 		
 		AccountType directCost = accountTypeRepository.save(new AccountType("Direct Costs", ""));
 		Account costOfGoodsSold = new Account(
-				getOrganization,
+				org,
 				"303",
 				"Cost of Goods Sold",
 				directCost,
@@ -207,7 +209,7 @@ public class AccountService {
 		costOfGoodsSold.setDescription("Cost of materials / production.");
 		
 		Account utilities = new Account(
-				getOrganization,
+				org,
 				"304",
 				"Utilities",
 				expenseType,
@@ -216,7 +218,7 @@ public class AccountService {
 		utilities.setDescription("Electricity, water, etc.");
 		
 		Account travelAndEntertainment = new Account(
-				getOrganization,
+				org,
 				"305",
 				"Travel & Entertainment",
 				expenseType,
