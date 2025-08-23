@@ -2,6 +2,7 @@ package org.merra.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -31,22 +32,12 @@ public class SecurityConfig {
 	private final CustomUserDetailsService customUserDetailsService;
 	
 	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
 		return builder.getAuthenticationManager();
 	}
 	
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-    
-    @Bean
-    SecurityEvaluationContextExtension securityEvaluationContextExtension() {
-        return new SecurityEvaluationContextExtension();
-    }
-    
-    @Bean
-    AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(customUserDetailsService);
         /* Tell AuthenticationProvider which UserDetailService to use */
         /*
@@ -56,14 +47,32 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+	
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
     
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+        return new SecurityEvaluationContextExtension();
+    }
+    
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
         		.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                 request ->
                         request
-                                .requestMatchers("/", "/api/auth/**").permitAll()
+                                .requestMatchers(
+                                		"/",
+                                		"/api/auth/**",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",  // springdoc's default path
+                                        "/api-docs/**"      // your custom path
+                                )
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated()
 
