@@ -60,11 +60,15 @@ public class AuthController {
         UserAccount getUser = userRepository.findUserByEmailIgnoreCase(loginRequest.email())
         		.orElseThrow(() -> new RuntimeException("User not found with email: " + loginRequest.email()));
         
-        String jwtToken = jwtUtils.generateToken(getUser);
+        Map<String, String> jwtTokens = jwtUtils.generateToken(getUser);
         List<String> roles = getUser.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
-        AuthResponse response = new AuthResponse(jwtToken, getUser.getUsername(), roles);
+        AuthResponse response = new AuthResponse(
+        		jwtTokens,
+        		getUser.getUsername(),
+        		roles
+        );
 
         return ResponseEntity.ok(response);
     }
@@ -96,7 +100,7 @@ public class AuthController {
          */
         userAccountService.createUserAccountSetting(newUser);
         
-        String jwtToken = jwtUtils.generateToken(newUser);
+        Map<String, String> jwtToken = jwtUtils.generateToken(newUser);
         List<String> roles = newUser.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();

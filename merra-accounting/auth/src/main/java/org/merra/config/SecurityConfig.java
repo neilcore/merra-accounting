@@ -2,7 +2,6 @@ package org.merra.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -58,19 +57,22 @@ public class SecurityConfig {
         return new SecurityEvaluationContextExtension();
     }
     
+    /**
+     * This security filter chain method is used for the apis.
+     * @param http - accepts {@linkplain HttpSecurity} object.
+     * @return - {@linkplain SecurityFilterChain} object.
+     * @throws Exception
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
         		.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                 request ->
                         request
                                 .requestMatchers(
-                                		"/",
-                                		"/api/auth/**",
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**",  // springdoc's default path
-                                        "/api-docs/**"      // your custom path
+                                		"/", "/api/auth/**",
+                                		"/swagger-ui/**","/api-docs/**","/v3/api-docs/**"
                                 )
                                 .permitAll()
                                 .anyRequest()
@@ -83,4 +85,12 @@ public class SecurityConfig {
                 .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+    
+//    @Bean
+//    public SecurityFilterChain oauth2LoginFilterChain(HttpSecurity http) throws Exception {
+//    	http
+//    		.oauth2Login(null);
+//    	
+//    	return http.build();
+//    }
 }
