@@ -16,6 +16,7 @@ import org.merra.entities.Invoice;
 import org.merra.entities.LineItem;
 import org.merra.entities.embedded.InvoiceActions;
 import org.merra.entities.embedded.InvoiceSettings;
+import org.merra.exceptions.OrganizationExceptions;
 import org.merra.repositories.AccountRepository;
 import org.merra.repositories.InvoiceRepository;
 import org.merra.repositories.OrganizationRepository;
@@ -87,7 +88,7 @@ public class InvoiceService {
 		} else if (obj instanceof UUID id) {
 			findInvoice = invoiceRepository.findById(id);
 			if (findInvoice.isEmpty()) {
-				throw new NoSuchElementException("Invoice object cannot be found.");
+				throw new NoSuchElementException(OrganizationExceptions.NOT_FOUND_INVOICE);
 			}
 		}
 		
@@ -105,7 +106,7 @@ public class InvoiceService {
 		Optional<Contact> getContactObject = contactService.findOrCreate(request.contact());
 		getContactObject.ifPresentOrElse(
 				obj -> invoice.setContact(obj),
-				() -> new NoSuchElementException("Contact object cannot be found.")
+				() -> new NoSuchElementException(OrganizationExceptions.NOT_FOUND_CONTACT_OBJ)
 		);
 		
 		setLineItems(
@@ -216,7 +217,7 @@ public class InvoiceService {
 						Optional<AccountLookup> accountLookup = accountRepository
 								.findAccountByCodeAndOrganization(lineItem.accountCode(), organizationId);
 						if (accountLookup.isEmpty()) {
-							throw new EntityNotFoundException("Account lookup not found.");
+							throw new EntityNotFoundException(OrganizationExceptions.NOT_FOUND_ACCOUNT_LOOKUP);
 						}
 						taxType = accountLookup.get().getAccountCode();
 					} else {
@@ -334,7 +335,7 @@ public class InvoiceService {
 			@NotNull String status
 	) {
 		Invoice findInvoiceById = invoiceRepository.findById(invoiceId)
-				.orElseThrow(() -> new EntityNotFoundException("Invoice not found."));
+				.orElseThrow(() -> new EntityNotFoundException(OrganizationExceptions.NOT_FOUND_INVOICE));
 		String formerStatus = findInvoiceById.getStatus();
 		
 		findInvoiceById.setStatus(status);
