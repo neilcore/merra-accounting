@@ -66,6 +66,11 @@
 		</dependency>
 		<dependency>
 		  <groupId>org.merra</groupId>
+		  <artifactId>user</artifactId>
+		  <version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.merra</groupId>
   		  <artifactId>auth</artifactId>
   		  <version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -73,11 +78,6 @@
 		  <groupId>org.merra</groupId>
   		  <artifactId>commons</artifactId>
   		  <version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.merra</groupId>
-		  <artifactId>user</artifactId>
-		  <version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 		  <groupId>org.merra</groupId>
