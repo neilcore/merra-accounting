@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,6 +42,7 @@ public class JournalService {
 				journalAccount.getAccountType().getName(),
 				journalAccount.getAccountName()
 		);
+		// TODO - tax details for journal
 		TaxDetail taxDetail = new TaxDetail(
 		);
 		return JournalLine.builder()

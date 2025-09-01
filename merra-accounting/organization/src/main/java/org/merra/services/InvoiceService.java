@@ -148,7 +148,7 @@ public class InvoiceService {
 	 */
 	private void setInvoiceActions(Invoice invoice, String status) {
 		InvoiceActions invoiceActions = new InvoiceActions();
-		if(status.equalsIgnoreCase("DRAFT")) {
+		if(status.equalsIgnoreCase(InvoiceRepository.INVOICE_STATUS_DRAFT)) {
 			invoiceActions.setDelete(true);
 			invoiceActions.setEdit(true);
 		}
@@ -340,7 +340,11 @@ public class InvoiceService {
 		findInvoiceById.setStatus(status);
 		invoiceRepository.save(findInvoiceById);
 		
-		if(status.equals("AUTHORISED")) {
+		/**
+		 * If the status is updated to @AUTHORISED
+		 * create a journal entry for this.
+		 */
+		if(status.equals(InvoiceRepository.INVOICE_STATUS_AUTHORISED)) {
 			journalService.entry(
 					findInvoiceById.getLineItems(),
 					findInvoiceById.getOrganization(),
