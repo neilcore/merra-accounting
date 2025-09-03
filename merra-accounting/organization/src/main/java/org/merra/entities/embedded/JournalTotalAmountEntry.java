@@ -10,16 +10,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Embeddable
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-public class TaxDetail implements Serializable {
-	/**
+public class JournalTotalAmountEntry implements Serializable {/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private BigDecimal taxAmount;
-	private String taxType;
-	private String taxName;
+	private BigDecimal totalDebit;
+	private BigDecimal totalCredit;
+
 }

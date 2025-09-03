@@ -1,7 +1,13 @@
 package org.merra.entities;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+
+import org.merra.entities.embedded.LineItemByAccountCode;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -87,4 +93,17 @@ public class LineItem {
 	@Column(nullable = false, precision = 7, scale = 2)
 	@NotNull(message = "total attribute cannot be null.")
 	private BigDecimal total;
+	
+	public static List<LineItemByAccountCode> getLineItemByAccountCode(Set<LineItem> lineItems) {
+		List<LineItemByAccountCode> response = new ArrayList<>();
+		for (LineItem lt: lineItems) {
+			int total = Collections.frequency(lineItems, lt.getAccountCode());
+			List<LineItem> getLineItems = lineItems.stream()
+					.filter(dt -> dt.getAccountCode().equals(lt.getAccountCode()))
+					.toList();
+			
+			response.add(new LineItemByAccountCode(lt.getAccountCode(), total, getLineItems));
+		}
+		return response;
+	}
 }

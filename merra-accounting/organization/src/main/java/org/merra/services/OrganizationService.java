@@ -11,11 +11,11 @@ import org.merra.entities.embedded.InvoiceSettings;
 import org.merra.entities.embedded.LineItemSettings;
 import org.merra.exception.CountryNotFoundException;
 import org.merra.mapper.OrganizationMapper;
-import org.merra.repositories.InvoiceRepository;
 import org.merra.repositories.OrganizationRepository;
 import org.merra.repositories.OrganizationSettingsRepository;
 import org.merra.repositories.OrganizationTypeRepository;
 import org.merra.services.phone.PhoneService;
+import org.merra.utilities.InvoiceConstants;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -71,7 +71,7 @@ public class OrganizationService {
 		settings.setOrganization(org);
 		
 		InvoiceSettings invoiceSettings = new InvoiceSettings();
-		invoiceSettings.setStatus(InvoiceRepository.INVOICE_STATUS_DRAFT);
+		invoiceSettings.setStatus(InvoiceConstants.INVOICE_STATUS_DRAFT);
 		settings.setInvoiceSettings(invoiceSettings);
 		
 		LineItemSettings lineItemSetting = new LineItemSettings();

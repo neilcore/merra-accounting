@@ -1,7 +1,6 @@
 package org.merra.entities;
 
 import java.math.BigDecimal;
-import java.sql.SQLType;
 import java.util.UUID;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -49,33 +48,14 @@ public class JournalLine {
 	
 	private String description;
 	
-	@Column(name = "net_amount", nullable = false, columnDefinition = "numeric(7,2)")
-	@NotNull(message = "netAmount attribute cannot be null.")
-	private BigDecimal netAmount;
+	@Column(columnDefinition = "numeric(7,2)")
+	private BigDecimal credit;
 	
-	// Gross amount of journal line (NetAmount + TaxAmount).
-	@Column(name = "gross_amount", nullable = false, columnDefinition = "numeric(7,2)")
-	@NotNull(message = "grossAmount attribute cannot be null.")
-	private BigDecimal grossAmount;
+	@Column(columnDefinition = "numeric(7,2)")
+	private BigDecimal debit;
 	
 	@Embedded
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(name = "tax_detail", columnDefinition = "jsonb")
 	private TaxDetail taxDetail;
-	
-	public JournalLine(
-			Journal journal,
-			AccountDetail accountDetails,
-			String description,
-			BigDecimal netAmount,
-			BigDecimal grossAmount,
-			TaxDetail taxDetail
-	) {
-		this.journal = journal;
-		this.accountDetails = accountDetails;
-		this.description = description;
-		this.netAmount = netAmount;
-		this.grossAmount = grossAmount;
-		this.taxDetail = taxDetail;
-	}
 }

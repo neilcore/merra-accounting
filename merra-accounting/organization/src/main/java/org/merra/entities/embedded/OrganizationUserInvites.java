@@ -3,7 +3,7 @@ package org.merra.entities.embedded;
 import java.time.LocalDate;
 
 import org.merra.entities.UserAccount;
-import org.merra.repositories.OrganizationRepository;
+import org.merra.utilities.OrganizationConstants;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
@@ -50,5 +50,5 @@ public class OrganizationUserInvites {
 	
 	@Column(name = "invitation_status", nullable = false)
 	@Builder.Default
-	private String invitationStatus = OrganizationRepository.INVITATION_STATUS_PENDING;
+	private String invitationStatus = OrganizationConstants.INVITATION_STATUS_PENDING;
 }

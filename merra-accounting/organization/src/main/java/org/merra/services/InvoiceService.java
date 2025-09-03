@@ -24,6 +24,7 @@ import org.merra.repositories.OrganizationSettingsRepository;
 import org.merra.repositories.TaxRateRepository;
 import org.merra.repositories.TaxTypeRepository;
 import org.merra.repositories.projections.AccountLookup;
+import org.merra.utilities.InvoiceConstants;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -149,7 +150,7 @@ public class InvoiceService {
 	 */
 	private void setInvoiceActions(Invoice invoice, String status) {
 		InvoiceActions invoiceActions = new InvoiceActions();
-		if(status.equalsIgnoreCase(InvoiceRepository.INVOICE_STATUS_DRAFT)) {
+		if(status.equalsIgnoreCase(InvoiceConstants.INVOICE_STATUS_DRAFT)) {
 			invoiceActions.setDelete(true);
 			invoiceActions.setEdit(true);
 		}
@@ -198,7 +199,7 @@ public class InvoiceService {
 			} else {
 				// Type EXCLUSIVE is the default if both lineAmountTypeRequest and 
 				// organizationDefaultTaxPurchase is not specified
-				lineAmountType = Optional.of(InvoiceRepository.INVOICE_LINE_AMOUNT_TYPE_EXCLUSIVE);
+				lineAmountType = Optional.of(InvoiceConstants.INVOICE_LINE_AMOUNT_TYPE_EXCLUSIVE);
 			}
 		}
 		invoice.setLineAmountTypes(lineAmountType.get());
@@ -253,12 +254,12 @@ public class InvoiceService {
 					BigDecimal calculateTaxAmount = BigDecimal.ZERO;
 					BigDecimal lineItemTotal = BigDecimal.ZERO;
 					
-					if (lineAmountTypeRequest.compareToIgnoreCase(InvoiceRepository.INVOICE_LINE_AMOUNT_TYPE_EXCLUSIVE) == 0) {
+					if (lineAmountTypeRequest.compareToIgnoreCase(InvoiceConstants.INVOICE_LINE_AMOUNT_TYPE_EXCLUSIVE) == 0) {
 						// LineAmountTypes: "Exclusive"
 						calculateTaxAmount = netLineAmount.multiply(effectiveRate);
 						lineItemTotal = new BigDecimal(lineItem.unitAmount()).add(effectiveRate);
 						
-					} else if (lineAmountTypeRequest.compareToIgnoreCase(InvoiceRepository.INVOICE_LINE_AMOUNT_TYPE_INCLUSIVE) == 0) {
+					} else if (lineAmountTypeRequest.compareToIgnoreCase(InvoiceConstants.INVOICE_LINE_AMOUNT_TYPE_INCLUSIVE) == 0) {
 						// LineAmountTypes: "Inclusive"
 						BigDecimal grossPrice = new BigDecimal(lineItem.unitAmount());
 						BigDecimal taxRate = effectiveRate.divide(new BigDecimal("100"), 2, RoundingMode.HALF_DOWN);
@@ -311,11 +312,12 @@ public class InvoiceService {
 		invoice.setSubTotal(subTotal);
 		
 		// Calculate and set total tax
-		BigDecimal totalTax = BigDecimal.ZERO;
-		for (LineItem lt: invoice.getLineItems()) {
-			totalTax = totalTax.add(lt.getTaxAmount());
-		}
+		BigDecimal totalTax = invoice.getLineItems().stream()
+				.map(tx -> tx.getTaxAmount())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		
 		invoice.setTotalTax(totalTax);
+		
 		// Calculate and set grand total
 		BigDecimal grandTotal = new BigDecimal(subTotal).add(totalTax);
 		invoice.setGrandTotal(grandTotal);
@@ -345,7 +347,7 @@ public class InvoiceService {
 		 * If the status is updated to @AUTHORISED
 		 * create a journal entry for this.
 		 */
-		if(status.equals(InvoiceRepository.INVOICE_STATUS_AUTHORISED)) {
+		if(status.equals(InvoiceConstants.INVOICE_STATUS_AUTHORISED)) {
 			journalService.entry(
 					findInvoiceById.getLineItems(),
 					findInvoiceById.getOrganization(),

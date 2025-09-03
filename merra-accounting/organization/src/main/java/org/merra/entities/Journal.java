@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.merra.entities.embedded.JournalTotalAmountEntry;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
@@ -59,4 +62,8 @@ public class Journal {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "journal")
 	@NotEmpty(message = "journalLines attribute cannot be empty.")
 	private List<JournalLine> journalLines;
+	
+	@JdbcTypeCode(SqlTypes.JSON)
+	@Column(name = "total", columnDefinition = "jsonb")
+	private JournalTotalAmountEntry total;
 }

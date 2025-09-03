@@ -10,13 +10,13 @@ import org.merra.dto.AccountResponse;
 import org.merra.entities.Account;
 import org.merra.entities.AccountCategory;
 import org.merra.entities.AccountType;
-import org.merra.entities.Invoice;
 import org.merra.entities.Organization;
 import org.merra.mapper.AccountMapper;
 import org.merra.repositories.AccountCategoryRepository;
 import org.merra.repositories.AccountRepository;
 import org.merra.repositories.AccountTypeRepository;
 import org.merra.repositories.InvoiceRepository;
+import org.merra.utilities.AccountConstants;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -53,105 +53,115 @@ public class AccountService {
 	public void createDefaultAccounts(@NotNull Organization org) {
 		
 		// Account categories
-		AccountCategory assetCat = accountCategoryRepository.findById(AccountCategoryRepository.assetId).get();
-		AccountCategory liabilityCat = accountCategoryRepository.findById(AccountCategoryRepository.liabilityId).get();
-		AccountCategory revenueCat = accountCategoryRepository.findById(AccountCategoryRepository.revenueId).get();
-		AccountCategory equityCat = accountCategoryRepository.findById(AccountCategoryRepository.equityId).get();
-		AccountCategory expenseCat = accountCategoryRepository.findById(AccountCategoryRepository.expenseId).get();
+		AccountCategory ASSET_CAT = accountCategoryRepository.findById(AccountCategoryRepository.assetId).get();
+		AccountCategory LIABILITY_CAT = accountCategoryRepository.findById(AccountCategoryRepository.liabilityId).get();
+		AccountCategory REVENUE_CAT = accountCategoryRepository.findById(AccountCategoryRepository.revenueId).get();
+		AccountCategory EQUITY_CAT = accountCategoryRepository.findById(AccountCategoryRepository.equityId).get();
+		AccountCategory EXPENSE_CAT = accountCategoryRepository.findById(AccountCategoryRepository.expenseId).get();
 		
 		// Create asset accounts
 		// A debit balance account
 		AccountType currentAsset = accountTypeRepository.save(new AccountType("Current Asset", ""));
 		Account accountReceivable = new Account(
 				org,
-				AccountRepository.ACC_CODE_ACC_RECEIVABLE,
+				AccountConstants.ACC_CODE_ACC_RECEIVABLE,
 				"Receivable Account",
 				currentAsset,
-				assetCat
+				ASSET_CAT
 		);
 		accountReceivable.setDescription("Money owed to the busines.");
 		
 		Account preparedExpense = new Account(
 				org,
-				AccountRepository.ACC_CODE_PREP_EXPENSES,
+				AccountConstants.ACC_CODE_PREP_EXPENSES,
 				"Prepared Expenses",
 				currentAsset,
-				assetCat
+				ASSET_CAT
 		);
 		preparedExpense.setDescription("Expenses paid in advance.");
 		
 		AccountType inventoryType = accountTypeRepository.save(new AccountType("Inventory", ""));
 		Account inventoryAssetAccount = new Account(
 				org,
-				AccountRepository.ACC_CODE_INVENTORY,
+				AccountConstants.ACC_CODE_INVENTORY,
 				"Inventory",
 				inventoryType,
-				assetCat
+				ASSET_CAT
 		);
 		inventoryAssetAccount.setDescription("Account for businesses that hold and track stock.");
 		
 		AccountType fixedAssetType = accountTypeRepository.save(new AccountType("Fixed Assets", ""));
 		Account fixedAssetAccount = new Account(
 				org,
-				AccountRepository.ACC_CODE_FIXED_ASSET,
+				AccountConstants.ACC_CODE_FIXED_ASSET,
 				"Fixed Asset",
 				fixedAssetType,
-				assetCat
+				ASSET_CAT
 		);
 		fixedAssetAccount.setDescription("Accounts for long-term assets.");
 		
 		accountRepository.saveAll(List.of(accountReceivable, preparedExpense, inventoryAssetAccount, fixedAssetAccount));
 		
 		// Create liability accounts
+		// current liabilities are short-term obligations
 		AccountType currentLiabilityType = accountTypeRepository.save(new AccountType("Current Liability", ""));
 		Account accountPayable = new Account(
 				org,
-				AccountRepository.ACC_CODE_ACC_PAYABLE,
+				AccountConstants.ACC_CODE_ACC_PAYABLE,
 				"Payable Account",
 				currentLiabilityType,
-				liabilityCat
+				LIABILITY_CAT
 		);
 		accountPayable.setDescription("Tracks money you owe to your suppliers.");
 		
 		AccountType liabilityType = accountTypeRepository.save(new AccountType("Liability", ""));
 		Account loans = new Account(
 				org,
-				"210",
-				AccountRepository.ACC_CODE_LOANS_PAYABLE,
+				AccountConstants.ACC_CODE_LOANS_PAYABLE,
+				"Loans payable",
 				liabilityType,
-				liabilityCat
+				LIABILITY_CAT
 		);
 		loans.setDescription("Long-term debt.");
 		
-		accountRepository.saveAll(List.of(accountPayable, loans));
+		Account taxPayable = new Account(
+				org,
+				"Tax payable",
+				AccountConstants.ACC_CODE_TAX_PAYABLE,
+				currentLiabilityType,
+				LIABILITY_CAT
+				);
+		taxPayable.setDescription("Tracks collected taxes.");
+		
+		accountRepository.saveAll(List.of(accountPayable, loans, taxPayable));
 		
 		// Create Equity accounts
 		AccountType equityType = accountTypeRepository.save(new AccountType("Equity", ""));
 		Account annualEarning = new Account(
 				org,
-				AccountRepository.ACC_CODE_RETAINED_EARNING,
+				AccountConstants.ACC_CODE_RETAINED_EARNING,
 				"Retained Earnings",
 				equityType,
-				equityCat
+				EQUITY_CAT
 		);
 		annualEarning.setDescription("Profits retained in the busines.");
 		
 		// This is the money (or assets) the owner takes out of the business for personal use e.g. money withdrawal.
 		Account ownersDrawing = new Account(
 				org,
-				"310",
-				AccountRepository.ACC_CODE_OWNER_DRAWING,
+				AccountConstants.ACC_CODE_OWNER_DRAWING,
+				"Owner withdrawal",
 				equityType,
-				equityCat
+				EQUITY_CAT
 		);
 		ownersDrawing.setDescription("Owner withdrawals.");
 		
 		Account ownerCapital = new Account(
 				org,
-				"320",
-				AccountRepository.ACC_CODE_OWNER_CAPITAL,
+				AccountConstants.ACC_CODE_OWNER_CAPITAL,
+				"Owner capital",
 				equityType,
-				equityCat
+				EQUITY_CAT
 		);
 		ownerCapital.setDescription("Money the owner puts into the business.");
 		
@@ -161,19 +171,19 @@ public class AccountService {
 		AccountType revenueType = accountTypeRepository.save(new AccountType("Revenue", ""));
 		Account salesRevenueAcc = new Account(
 				org,
-				"400",
-				AccountRepository.ACC_CODE_SALES_REVENUE,
+				AccountConstants.ACC_CODE_SALES_REVENUE,
+				"Sales revenue",
 				revenueType,
-				revenueCat
+				REVENUE_CAT
 		);
 		salesRevenueAcc.setDescription("Income from core operations.");
 		
 		Account serviceIncomeAcc = new Account(
 				org,
-				AccountRepository.ACC_CODE_SERVICE_INCOME,
+				AccountConstants.ACC_CODE_SERVICE_INCOME,
 				"Service Income",
 				revenueType,
-				revenueCat
+				REVENUE_CAT
 		);
 		serviceIncomeAcc.setDescription("Fees for services provided.");
 		
@@ -183,56 +193,56 @@ public class AccountService {
 		AccountType expenseType = accountTypeRepository.save(new AccountType("Expense", ""));
 		Account officeExpenses = new Account(
 				org,
-				AccountRepository.ACC_CODE_OFFICE_EXPENSES,
+				AccountConstants.ACC_CODE_OFFICE_EXPENSES,
 				"Office Expenses",
 				expenseType,
-				expenseCat
+				EXPENSE_CAT
 		);
 		officeExpenses.setDescription("Costs that a business incurs for the day-to-day operation and maintenance of its workspace.");
 		
 		Account advertisingExpenses = new Account(
 				org,
-				AccountRepository.ACC_CODE_MARKETING_EXPENSES,
+				AccountConstants.ACC_CODE_MARKETING_EXPENSES,
 				"Marketing Expense",
 				expenseType,
-				expenseCat
+				EXPENSE_CAT
 		);
 		advertisingExpenses.setDescription("Costs a business incurs to promote its products, services, or brand to a target audience.");
 		
 		Account consultingAndAccountingExpenses = new Account(
 				org,
-				AccountRepository.ACC_CODE_CONSULTING_ACCOUNTING,
+				AccountConstants.ACC_CODE_CONSULTING_ACCOUNTING,
 				"Consulting & Accounting",
 				expenseType,
-				expenseCat
+				EXPENSE_CAT
 		);
 		consultingAndAccountingExpenses.setDescription("Costs a business incurs for professional services from external experts.");
 		
 		AccountType directCost = accountTypeRepository.save(new AccountType("Direct Costs", ""));
 		Account costOfGoodsSold = new Account(
 				org,
-				AccountRepository.ACC_CODE_COST_GOODS_SOLD,
+				AccountConstants.ACC_CODE_COST_GOODS_SOLD,
 				"Cost of Goods Sold",
 				directCost,
-				expenseCat
+				EXPENSE_CAT
 		);
 		costOfGoodsSold.setDescription("Cost of materials / production.");
 		
 		Account utilities = new Account(
 				org,
-				AccountRepository.ACC_CODE_UTILITIES,
+				AccountConstants.ACC_CODE_UTILITIES,
 				"Utilities",
 				expenseType,
-				expenseCat
+				EXPENSE_CAT
 		);
 		utilities.setDescription("Electricity, water, etc.");
 		
 		Account travelAndEntertainment = new Account(
 				org,
-				AccountRepository.ACC_CODE_TRAVEL_AND_ENTERTAINMENT,
+				AccountConstants.ACC_CODE_TRAVEL_AND_ENTERTAINMENT,
 				"Travel & Entertainment",
 				expenseType,
-				expenseCat
+				EXPENSE_CAT
 		);
 		travelAndEntertainment.setDescription("Business travel, meals.");
 		

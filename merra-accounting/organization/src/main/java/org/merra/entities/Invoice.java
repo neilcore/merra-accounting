@@ -10,6 +10,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.merra.entities.embedded.InvoiceActions;
 import org.merra.repositories.InvoiceRepository;
+import org.merra.utilities.InvoiceConstants;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.CascadeType;
@@ -112,7 +113,7 @@ public class Invoice {
 	
 	
 	public void setType(String type) {
-		if (!Set.of(InvoiceRepository.INVOICE_TYPE_CUSTOMER_INVOICE, InvoiceRepository.INVOICE_TYPE_SUPPLIER_INVOICE).contains(type.toLowerCase())) {
+		if (!Set.of(InvoiceConstants.INVOICE_TYPE_CUSTOMER_INVOICE, InvoiceConstants.INVOICE_TYPE_SUPPLIER_INVOICE).contains(type.toLowerCase())) {
 			throw new NoSuchElementException("Invalid invoice type value.");
 		} else {
 			this.type = type.toUpperCase();

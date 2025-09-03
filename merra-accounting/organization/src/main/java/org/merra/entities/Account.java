@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.UUID;
 import org.hibernate.annotations.SQLRestriction;
 import org.merra.repositories.AccountRepository;
+import org.merra.utilities.AccountConstants;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -77,7 +78,7 @@ public class Account {
 	private boolean archived = false;
 	
 	public void setStatus(String stat) {
-		if (!Set.of(AccountRepository.ACCOUNT_STATUS_ACTIVE, AccountRepository.ACCOUNT_STATUS_ARCHIVED).contains(stat.toUpperCase())) {
+		if (!Set.of(AccountConstants.ACCOUNT_STATUS_ACTIVE, AccountConstants.ACCOUNT_STATUS_ARCHIVED).contains(stat.toUpperCase())) {
 			throw new NoSuchElementException("Invalid status.");
 		}
 		this.status = stat;
@@ -98,5 +99,26 @@ public class Account {
 		this.accountType = type;
 		this.category = category;
 	}
+	
+	// Check the type of entry: debit or credit
+	public static String checkEntryType(String accountCategory) {
+		Set<String> debits = Set.of(
+				AccountConstants.ACC__CLASS_TYPE_ASSET,
+				AccountConstants.ACC__CLASS_TYPE_EXPENSE
+		);
+		
+		Set<String> credit = Set.of(
+				AccountConstants.ACC__CLASS_TYPE_LIABILITY,
+				AccountConstants.ACC__CLASS_TYPE_EQUITY,
+				AccountConstants.ACC__CLASS_TYPE_REVENUE
+		);
+		if (debits.contains(accountCategory)) {
+			return AccountConstants.ACC_ENTRY_DEBIT;
+		} else if (credit.contains(accountCategory)) {
+			return AccountConstants.ACC_ENTRY_CREDIT;
+		}
+		return null;
+	}
+	
 }
 

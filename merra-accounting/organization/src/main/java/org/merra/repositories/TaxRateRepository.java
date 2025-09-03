@@ -12,11 +12,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TaxRateRepository extends JpaRepository<TaxRate, UUID> {
-	// TaxRate statuses
-	static final String TAXRATE_STATUS_ACTIVE = "ACTIVE";
-	static final String TAXRATE_STATUS_INACTIVE = "INACTIVE";
-	static final String TAXRATE_STATUS_DELETED = "DELETED";
-	static final String TAXRATE_STATUS_ARCHIVED = "ARCHIVED";
 	
 	@Query("SELECT tr FROM TaxRate tr WHERE tr.organization = :organizationID")
 	Optional<TaxRate> findTaxRateByOrganization(@Param("organizationID") UUID organizationID);

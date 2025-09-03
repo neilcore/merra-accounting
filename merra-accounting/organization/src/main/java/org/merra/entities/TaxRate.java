@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.merra.audit.CreatedDate;
 import org.merra.repositories.TaxRateRepository;
+import org.merra.utilities.TaxConstants;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
@@ -91,9 +92,9 @@ public class TaxRate {
 	
 	public void setStatus(String stat) {
 		Set<String> taxStatuses = Set.of(
-				TaxRateRepository.TAXRATE_STATUS_ACTIVE,
-				TaxRateRepository.TAXRATE_STATUS_ARCHIVED,
-				TaxRateRepository.TAXRATE_STATUS_DELETED
+				TaxConstants.TAXRATE_STATUS_ACTIVE,
+				TaxConstants.TAXRATE_STATUS_ARCHIVED,
+				TaxConstants.TAXRATE_STATUS_DELETED
 		);
 		if (!taxStatuses.contains(stat.toUpperCase())) {
 			throw new NoSuchElementException("Tax status value unrecognised.");
