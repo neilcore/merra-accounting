@@ -65,7 +65,7 @@ public class AccountService {
 		Account accountReceivable = new Account(
 				org,
 				AccountConstants.ACC_CODE_ACC_RECEIVABLE,
-				"Receivable Account",
+				"Account receivable",
 				currentAsset,
 				ASSET_CAT
 		);
