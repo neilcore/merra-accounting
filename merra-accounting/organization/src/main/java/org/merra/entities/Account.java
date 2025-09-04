@@ -61,6 +61,7 @@ public class Account {
 	
 	private String status;
 	
+	@NotBlank(message = "description attribute cannot be blank.")
 	private String description;
 	
 	@Column(name = "tax_type")
