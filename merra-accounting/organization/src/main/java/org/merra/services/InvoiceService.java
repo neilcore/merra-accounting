@@ -191,9 +191,9 @@ public class InvoiceService {
 				organizationRepository.findLineAmountType(organizationId);
 		
 		// Set line amount type
-		if (!lineAmountTypeRequest.isBlank() && !lineAmountTypeRequest.isEmpty()) {
+		if (!lineAmountTypeRequest.isBlank()) {
 			lineAmountType = Optional.of(lineAmountTypeRequest);
-		} else if (lineAmountTypeRequest.isBlank() || lineAmountTypeRequest.isEmpty()) {
+		} else if (lineAmountTypeRequest.isBlank()) {
 			if (organizationDefaultTaxPurchase.isPresent()) {
 				lineAmountType = Optional.of(organizationDefaultTaxPurchase.get());
 			} else {
