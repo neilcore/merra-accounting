@@ -109,8 +109,9 @@ public class Contact {
 	@TimeZoneStorage(TimeZoneStorageType.NORMALIZE_UTC)
 	private Instant updatedDateUTC;
 	
-	public Contact(@NotBlank String name) {
+	public Contact(@NotBlank String name, @NotNull Organization organization) {
 		this.name = name;
+		this.organization = organization;
 	}
 	
 	public void setIsSupplier(Boolean sup) {

@@ -18,6 +18,7 @@ import org.merra.entities.embedded.InvoiceActions;
 import org.merra.entities.embedded.InvoiceSettings;
 import org.merra.exceptions.OrganizationExceptions;
 import org.merra.repositories.AccountRepository;
+import org.merra.repositories.ContactRepository;
 import org.merra.repositories.InvoiceRepository;
 import org.merra.repositories.OrganizationRepository;
 import org.merra.repositories.OrganizationSettingsRepository;
@@ -44,6 +45,7 @@ public class InvoiceService {
 	private final OrganizationRepository organizationRepository;
 	private final OrganizationSettingsRepository organizationSettingsRepository;
 	private final InvoiceRepository invoiceRepository;
+	private final ContactRepository contactRepository;
 	private final ContactService contactService;
 	private final JournalService journalService;
 	private final AccountRepository accountRepository;
@@ -104,17 +106,16 @@ public class InvoiceService {
 		invoice.setType(request.invoiceType());
 		
 		// Set invoice contact
-		Optional<Contact> getContactObject = contactService.findOrCreate(request.contact());
-		getContactObject.ifPresentOrElse(
-				obj -> invoice.setContact(obj),
-				() -> new NoSuchElementException(OrganizationExceptions.NOT_FOUND_CONTACT_OBJ)
-		);
+		Contact getContact = contactRepository.findById(request.contact())
+				.orElseThrow(() -> new EntityNotFoundException(OrganizationExceptions.NOT_FOUND_CONTACT_OBJ));
+		invoice.setContact(getContact);
 		
+		Integer CONTACT_DEFAULT_DISCOUNT = getContact.getDefaultDiscount();
 		setLineItems(
 				invoice,
 				request.lineItems(),
 				request.lineAmountType(),
-				getContactObject.get().getDefaultDiscount(),
+				CONTACT_DEFAULT_DISCOUNT,
 				organizationId
 		);
 		calculateInvoice(invoice);

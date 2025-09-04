@@ -11,7 +11,6 @@ public class InvoiceConditionalValidator implements ConstraintValidator<Validate
 	@Override
 	public boolean isValid(CreateInvoiceRequest value, ConstraintValidatorContext context) {
 		if (value == null) return true; // let @NotNull handle the null DTO itself
-		if (!value.contact().containsKey("contactId")) return false;
 		
 		/**
 		 * If taxEligible is set to false, no tax type must be set.

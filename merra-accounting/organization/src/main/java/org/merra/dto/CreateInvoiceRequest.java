@@ -21,7 +21,7 @@ public record CreateInvoiceRequest(
 		@NotNull(message = "invoiceType component cannot be null.")
 		String invoiceType,
 		@NotNull(message = "contact component cannot be null")
-		Map<String, Object> contact,
+		UUID contact,
 		@NotNull(message = "lineAmounType component cannot be null")
 		@Pattern(regexp = "^[A-Z](?:[A-Z]|_[A-Z])*$", message = "Invalid value for lineAmountType component.")
 		String lineAmountType,
