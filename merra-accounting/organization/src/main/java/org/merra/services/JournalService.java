@@ -18,11 +18,13 @@ import org.merra.entities.embedded.LineItemByAccountCode;
 import org.merra.entities.embedded.TaxDetail;
 import org.merra.exceptions.OrganizationExceptions;
 import org.merra.repositories.AccountRepository;
+import org.merra.repositories.JournalRepository;
 import org.merra.utilities.AccountConstants;
 import org.merra.utilities.InvoiceConstants;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JournalService {
 	private final AccountRepository accountRepository;
+	private final JournalRepository journalRepository;
 	
+	@Transactional
 	public void entry(
 			@NotEmpty Set<LineItem> lineItems,
 			Organization org,
@@ -64,8 +68,6 @@ public class JournalService {
 					getAccReceivable,
 					findInvoiceById.getGrandTotal()
 			));
-			//TaxDetail debitTaxDetail = new TaxDetail(new BigDecimal("0.00"), null, "");
-			//debitJournalLine.setTaxDetail(debitTaxDetail);
 		}
 		
 		List<JournalLine> journalLines = new ArrayList<>();
@@ -128,6 +130,8 @@ public class JournalService {
 		
 		JournalTotalAmountEntry total = new JournalTotalAmountEntry(totalDebit, totalCredit);
 		createJournal.setTotal(total);
+		
+		journalRepository.save(createJournal);
 	}
 	
 	/**

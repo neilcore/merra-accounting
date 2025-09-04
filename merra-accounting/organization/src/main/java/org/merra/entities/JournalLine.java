@@ -53,9 +53,4 @@ public class JournalLine {
 	
 	@Column(columnDefinition = "numeric(7,2)")
 	private BigDecimal debit;
-	
-	@Embedded
-	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(name = "tax_detail", columnDefinition = "jsonb")
-	private TaxDetail taxDetail;
 }
