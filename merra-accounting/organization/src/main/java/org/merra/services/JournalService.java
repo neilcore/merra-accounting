@@ -3,6 +3,7 @@ package org.merra.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.merra.entities.Account;
@@ -17,7 +18,6 @@ import org.merra.entities.embedded.LineItemByAccountCode;
 import org.merra.entities.embedded.TaxDetail;
 import org.merra.exceptions.OrganizationExceptions;
 import org.merra.repositories.AccountRepository;
-import org.merra.repositories.InvoiceRepository;
 import org.merra.utilities.AccountConstants;
 import org.merra.utilities.InvoiceConstants;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
+// TODO - work on the taxes part
 @Service
 @RequiredArgsConstructor
 public class JournalService {
@@ -48,25 +49,28 @@ public class JournalService {
 		 * if it is a customer invoice
 		 */
 		String CUSTOMER_INVOICE = InvoiceConstants.INVOICE_TYPE_CUSTOMER_INVOICE;
-		JournalLine debitJournalLine = null;
-		
+		Optional<JournalLine> accountReceivableJournalEntry = Optional.empty();
+		// If invoice is a customer invoice
+		// Create an entry for account receivable
 		if (findInvoiceById.getType().equalsIgnoreCase(CUSTOMER_INVOICE)) {
-			Account getDebitAccount = accountRepository
+			Account getAccReceivable = accountRepository
 					.findByAccountCodeAndOrganizationId(AccountConstants.ACC_CODE_ACC_RECEIVABLE, org.getId())
-					.orElseThrow(()-> new EntityNotFoundException(OrganizationExceptions.NOT_FOUND_ACCOUNT));
-			
-			debitJournalLine = buildJournalLine(
-					createJournal,
-					getDebitAccount,
-					findInvoiceById.getGrandTotal()
+					.orElseThrow(()-> 
+					new EntityNotFoundException(OrganizationExceptions.NOT_FOUND_ACCOUNT)
 			);
-			TaxDetail debitTaxDetail = new TaxDetail(new BigDecimal("0.00"), null, ""); // TODO - needs improvement
-			debitJournalLine.setTaxDetail(debitTaxDetail);
+			
+			accountReceivableJournalEntry = Optional.of(buildJournalLine(
+					createJournal,
+					getAccReceivable,
+					findInvoiceById.getGrandTotal()
+			));
+			//TaxDetail debitTaxDetail = new TaxDetail(new BigDecimal("0.00"), null, "");
+			//debitJournalLine.setTaxDetail(debitTaxDetail);
 		}
 		
 		List<JournalLine> journalLines = new ArrayList<>();
-		if (debitJournalLine != null) {
-			journalLines.add(debitJournalLine);
+		if (accountReceivableJournalEntry.isEmpty()) {
+			journalLines.add(accountReceivableJournalEntry.get());
 		}
 		
 		// for tracking taxes
@@ -150,13 +154,13 @@ public class JournalService {
 		jl.setDescription(accountCode.getDescription());
 		String category = accountCode.getCategory().getName();
 		
-		// check if account code category is a type debit
-		// set the amount on debit entry
+		/**
+		 * Check account code category type (debit or credit)
+		 * Then set the amount according to the entry type.
+		 */
 		if (Account.checkEntryType(category).equals(AccountConstants.ACC_ENTRY_DEBIT)) {
 			jl.setDebit(totalLineAmount);
 		}else if (Account.checkEntryType(category).equals(AccountConstants.ACC_ENTRY_CREDIT)) {
-			// check if account code category is a type credit
-			// set the amount on credit entry
 			jl.setCredit(totalLineAmount);
 		}
 		
