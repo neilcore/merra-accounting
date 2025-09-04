@@ -44,6 +44,10 @@ public class Contact {
 	@Column(name = "contact_id", nullable = false, unique = true)
 	private UUID id;
 	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "organization", nullable = false, referencedColumnName = "id")
+	private Organization organization;
+	
 	// Full name of contact / organization
 	@Column(name = "name", nullable = false, unique = true)
 	@NotBlank(message = "Name cannot be blank")
@@ -104,6 +108,10 @@ public class Contact {
 	@Column(name = "updated_date_utc")
 	@TimeZoneStorage(TimeZoneStorageType.NORMALIZE_UTC)
 	private Instant updatedDateUTC;
+	
+	public Contact(@NotBlank String name) {
+		this.name = name;
+	}
 	
 	public void setIsSupplier(Boolean sup) {
 		this.isSupplier = sup ? Boolean.TRUE : Boolean.FALSE;
