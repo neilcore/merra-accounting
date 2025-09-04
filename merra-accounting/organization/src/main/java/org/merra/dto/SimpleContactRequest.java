@@ -5,7 +5,7 @@ import java.util.UUID;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record CreateContactRequest (
+public record SimpleContactRequest (
 		@NotBlank(message = "name component cannot be blank")
 		String name,
 		@NotNull(message = "organizationId component cannot be null")
