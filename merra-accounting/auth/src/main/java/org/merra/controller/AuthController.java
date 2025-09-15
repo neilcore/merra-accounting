@@ -1,11 +1,11 @@
 package org.merra.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.merra.api.ApiError;
+import org.merra.api.ApiResponse;
 import org.merra.config.JwtUtils;
 import org.merra.dto.AuthResponse;
 import org.merra.dto.LoginRequest;
@@ -14,6 +14,7 @@ import org.merra.entities.UserAccount;
 import org.merra.enums.Roles;
 import org.merra.repositories.UserAccountRepository;
 import org.merra.services.UserAccountService;
+import org.merra.utils.AuthConstantResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -52,25 +53,36 @@ public class AuthController {
                     )
             );
         } catch (AuthenticationException e) {
-        	ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Invalid credentials", List.of(e.getMessage()));
+        	ApiError apiError = new ApiError(
+        			AuthConstantResponses.INVALID_CREDENTIALS,
+        			false,
+        			HttpStatus.BAD_REQUEST,
+        			List.of(e.getMessage())
+        	);
             return ResponseEntity.badRequest().body(apiError);
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserAccount getUser = userRepository.findUserByEmailIgnoreCase(loginRequest.email())
-        		.orElseThrow(() -> new RuntimeException("User not found with email: " + loginRequest.email()));
+        UserAccount getUser = userRepository
+        		.findUserByEmailIgnoreCase(loginRequest.email()).get();
         
         Map<String, String> jwtTokens = jwtUtils.generateToken(getUser);
         List<String> roles = getUser.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
-        AuthResponse response = new AuthResponse(
+        AuthResponse authResponse = new AuthResponse(
         		jwtTokens,
         		getUser.getUsername(),
         		roles
         );
-
-        return ResponseEntity.ok(response);
+        
+        ApiResponse res = new ApiResponse(
+        		AuthConstantResponses.LOGIN_SUCCESSFUL,
+        		true,
+        		HttpStatus.OK,
+        		authResponse
+        );
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping("signup")
@@ -78,10 +90,13 @@ public class AuthController {
         Optional<UserAccount> findUserEmail = userRepository.findUserByEmailIgnoreCase(signupRequest.email());
 
         if (findUserEmail.isPresent()) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Email already exists");
-            errorResponse.put("status", false);
-            return ResponseEntity.badRequest().body(errorResponse);
+            ApiError apiError = new ApiError(
+            		AuthConstantResponses.SIGNUP_FAILED,
+            		false,
+            		HttpStatus.CONFLICT,
+            		AuthConstantResponses.EMAIL_EXISTS
+            );
+            return ResponseEntity.badRequest().body(apiError);
         }
         
         UserAccount userBuilder = UserAccount.builder()
@@ -104,8 +119,13 @@ public class AuthController {
         List<String> roles = newUser.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
-        AuthResponse response = new AuthResponse(jwtToken, newUser.getUsername(), roles);
+        AuthResponse authResponse = new AuthResponse(jwtToken, newUser.getUsername(), roles);
 
+        ApiResponse response = new ApiResponse();
+        response.setMessage(AuthConstantResponses.ACCOUNT_CREATED);
+        response.setResult(true);
+        response.setResponse(HttpStatus.CREATED);
+        response.setData(authResponse);
         return ResponseEntity.ok(response);
     }
 }

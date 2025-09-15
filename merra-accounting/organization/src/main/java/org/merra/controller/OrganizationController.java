@@ -37,10 +37,12 @@ public class OrganizationController {
 	@Operation(summary = "create new organization")
 	@PostMapping("create")
 	public ResponseEntity<ApiResponse> createOrganization(@RequestBody @Valid CreateOrganizationRequest data) {
-		ApiResponse response = new ApiResponse();
-		response.setData(organizationService.createNewOrganizationObject(data));
-		response.setMessage("Organization object found successfully.");
-		response.setStatus(HttpStatus.OK);
+		ApiResponse response = new ApiResponse(
+				"Organization object found successfully.",
+				true,
+				HttpStatus.OK,
+				organizationService.createNewOrganizationObject(data)
+		);
 		
 		return ResponseEntity.ok(response);
 	}
@@ -63,10 +65,12 @@ public class OrganizationController {
 	
 	@GetMapping("{id}")
 	public ResponseEntity<ApiResponse> getOrganization(@PathVariable(required = true) UUID id) {
-		ApiResponse response = new ApiResponse();
-		response.setData(organizationService.retrieveOrganizationById(id));
-		response.setMessage("Organization object found successfully.");
-		response.setStatus(HttpStatus.OK);
+		ApiResponse response = new ApiResponse(
+				"Organization object found successfully.",
+				true,
+				HttpStatus.OK,
+				organizationService.retrieveOrganizationById(id)
+		);
 		
 		return ResponseEntity.ok(response);
 	}

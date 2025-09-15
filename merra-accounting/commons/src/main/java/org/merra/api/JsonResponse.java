@@ -16,11 +16,15 @@ sealed class JsonResponse permits ApiError, ApiResponse {
 	@NotBlank(message = "message attribute cannot be blank.")
 	private String message;
 	
-	@NotNull(message = "status attribute cannot be null.")
-	private HttpStatus status;
+	@NotNull(message = "result attribute cannot be null.")
+	private boolean result;
 	
-	public JsonResponse(String msg, HttpStatus status) {
+	@NotNull(message = "response attribute cannot be null.")
+	private HttpStatus response;
+	
+	public JsonResponse(String msg, boolean result, HttpStatus status) {
 		this.message = msg.isBlank() ? "Request sent successfully" : msg;
-		this.status = status == null ? HttpStatus.OK : status;
+		this.result = result;
+		this.response = status;
 	}
 }

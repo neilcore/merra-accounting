@@ -12,8 +12,8 @@ import lombok.Setter;
 public final class ApiResponse extends JsonResponse {
 	private Object data;
 	
-	public ApiResponse(String message, HttpStatus status, Object data) {
-		super(message, status);
+	public ApiResponse(String message, boolean result, HttpStatus status, Object data) {
+		super(message, result, status);
 		this.data = data;
 	}
 }

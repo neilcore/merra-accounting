@@ -44,9 +44,9 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
         }
 
-        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
+        ApiError apiError = new ApiError(ex.getLocalizedMessage(), false, HttpStatus.BAD_REQUEST, errors);
         return handleExceptionInternal(
-                ex, apiError, headers, apiError.getStatus(), request);
+                ex, apiError, headers, apiError.getResponse(), request);
     }
 
     @Override
@@ -54,10 +54,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         String error = ex.getParameterName() + " parameter is missing";
 
         ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
+                new ApiError(ex.getLocalizedMessage(), false, HttpStatus.BAD_REQUEST, error);
         
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getResponse());
     }
 
     
@@ -77,9 +77,9 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
+                new ApiError(ex.getLocalizedMessage(), false, HttpStatus.BAD_REQUEST, errors);
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getResponse());
     }
 
     @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
@@ -89,17 +89,17 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getName() + " should be of type " + ex.getRequiredType().getName();
 
         ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
+                new ApiError(ex.getLocalizedMessage(), false, HttpStatus.BAD_REQUEST, error);
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getResponse());
     }
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
 
-        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        ApiError apiError = new ApiError(ex.getLocalizedMessage(), false, HttpStatus.NOT_FOUND, error);
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getResponse());
     }
 
     @Override
@@ -114,10 +114,9 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
                 " method is not supported for this request. Supported methods are ");
         ex.getSupportedHttpMethods().forEach(t -> builder.append(t + " "));
 
-        ApiError apiError = new ApiError(HttpStatus.METHOD_NOT_ALLOWED,
-                ex.getLocalizedMessage(), builder.toString());
+        ApiError apiError = new ApiError(ex.getLocalizedMessage(), false, HttpStatus.METHOD_NOT_ALLOWED, builder.toString());
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getResponse());
     }
 
     @Override
@@ -131,10 +130,9 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         builder.append(" media type is not supported. Supported media types are ");
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t + ", "));
 
-        ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE,
-                ex.getLocalizedMessage(), builder.substring(0, builder.length() - 2));
+        ApiError apiError = new ApiError( ex.getLocalizedMessage(), false, HttpStatus.UNSUPPORTED_MEDIA_TYPE, builder.substring(0, builder.length() - 2));
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getResponse());
     }
 
     /**
@@ -146,9 +144,9 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
         ApiError apiError = new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
+        		ex.getLocalizedMessage(), false, HttpStatus.INTERNAL_SERVER_ERROR, "error occurred");
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getResponse());
     }
       
     /**
@@ -159,10 +157,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ EntityNotFoundException.class })
     public ResponseEntity<Object> entityNotFoundException(EntityNotFoundException ex) {
         ApiError apiError = new ApiError(
-                HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), ex.getMessage());
+        		ex.getLocalizedMessage(), false, HttpStatus.NOT_FOUND, ex.getMessage());
         
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getResponse());
 //        return ex.getMessage();
     }
     
@@ -174,9 +172,9 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ NoSuchElementException.class })
     public ResponseEntity<Object> elementNotFoundException(NoSuchElementException ex) {
         ApiError apiError = new ApiError(
-                HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), ex.getMessage());
+        		ex.getLocalizedMessage(), false, HttpStatus.NOT_FOUND, ex.getMessage());
         
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getResponse());
     }
 }

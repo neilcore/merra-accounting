@@ -19,13 +19,13 @@ public final class ApiError extends JsonResponse {
 	@NotEmpty(message = "errors attribute cannot be empty.")
     private List<String> errors;
 
-    public ApiError(HttpStatus status, String message, List<String> errors) {
-        super(message, status);
+    public ApiError(String message, boolean result, HttpStatus response, List<String> errors) {
+        super(message, result, response);
         this.errors = errors;
     }
 
-    public ApiError(HttpStatus status, String message, String error) {
-    	super(message, status);
+    public ApiError(String message, Boolean result, HttpStatus response, String error) {
+    	super(message, result, response);
         this.errors = Arrays.asList(error);
     }
 }
