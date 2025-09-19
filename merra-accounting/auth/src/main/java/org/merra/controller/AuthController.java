@@ -10,6 +10,7 @@ import org.merra.config.JwtUtils;
 import org.merra.dto.AuthResponse;
 import org.merra.dto.LoginRequest;
 import org.merra.dto.SignupRequest;
+import org.merra.dto.TokenRequest;
 import org.merra.entities.UserAccount;
 import org.merra.enums.Roles;
 import org.merra.repositories.UserAccountRepository;
@@ -23,6 +24,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,11 +39,33 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("api/auth/")
 @RequiredArgsConstructor
 public class AuthController {
+	private final UserDetailsService userDetailsService;
 	private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserAccountRepository userRepository;
     private final UserAccountService userAccountService;
+    
+    @PostMapping("tokens")
+    public ResponseEntity<?> tokens(@Valid @RequestBody TokenRequest request) {
+    	UserDetails userDetails = userDetailsService.loadUserByUsername(request.userEmail());
+    	
+    	boolean IS_TOKEN_VALID = jwtUtils.isTokenValid(request.refreshToken(), userDetails);
+        if (!IS_TOKEN_VALID){
+        	return new ResponseEntity<>(
+        			AuthConstantResponses.INVALID_REFRESH_TOKEN,
+        			HttpStatus.UNAUTHORIZED
+        	);
+        }
+        
+        final Map<String, String> jwtToken = jwtUtils.generateToken(userDetails);
+        AuthResponse.Tokens tokens = new AuthResponse.Tokens(
+        		jwtToken.get("accessToken"),
+        		jwtToken.get("refreshToken")
+        );
+        
+        return new ResponseEntity<>(tokens, HttpStatus.OK);
+    }
     
     @PostMapping("signin")
     public ResponseEntity<?> signin(@Valid @RequestBody LoginRequest loginRequest) {
@@ -71,7 +96,7 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
         AuthResponse authResponse = new AuthResponse(
-        		jwtTokens,
+        		new AuthResponse.Tokens(jwtTokens.get("accessToken"), jwtTokens.get("refreshToken")),
         		getUser.getUsername(),
         		roles
         );
@@ -119,7 +144,11 @@ public class AuthController {
         List<String> roles = newUser.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
-        AuthResponse authResponse = new AuthResponse(jwtToken, newUser.getUsername(), roles);
+        AuthResponse authResponse = new AuthResponse(
+        		new AuthResponse.Tokens(jwtToken.get("accessToken"), jwtToken.get("refreshToken")),
+        		newUser.getUsername(),
+        		roles
+        );
 
         ApiResponse response = new ApiResponse();
         response.setMessage(AuthConstantResponses.ACCOUNT_CREATED);

@@ -34,6 +34,11 @@ import lombok.RequiredArgsConstructor;
 public class OrganizationController {
 	private final OrganizationService organizationService;
 	
+	@GetMapping("test")
+	public ResponseEntity<String> organizationTest() {
+		return ResponseEntity.ok("Okay...");
+	}
+	
 	@Operation(summary = "create new organization")
 	@PostMapping("create")
 	public ResponseEntity<ApiResponse> createOrganization(@RequestBody @Valid CreateOrganizationRequest data) {
