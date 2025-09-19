@@ -11,6 +11,7 @@ import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -21,10 +22,12 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtils {
-    @Value("${spring.app.jwt.secret}")
+    @Value("${jwt.token.secret}")
     private String jwtSecret;
-    @Value("${spring.app.jwt.access-token}")
+    @Value("${jwt.access.token.duration}")
     private int forAccessToken;
+    @Value("${jwt.refresh.token-expiration}")
+    private int refreshTokenExpiration;
     
     /**
      * This method will extract the user-name from the token.
@@ -55,7 +58,7 @@ public class JwtUtils {
      * @return - {@linkplain java.util.Map}
      */
     public Map<String, String> generateToken(
-    		Map<String, Objects> extractClaims,
+    		Map<String, Object> extractClaims,
     		UserDetails userDetails,
     		String duration
     ) {
@@ -69,7 +72,7 @@ public class JwtUtils {
     		tokenType = "refreshToken";
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
-            cal.add(Calendar.DAY_OF_MONTH, 5); // add 5 days
+            cal.add(Calendar.DAY_OF_MONTH, refreshTokenExpiration); // add 5 days
             Date refreshTokenExpirationDate = cal.getTime();
             expirationDate = refreshTokenExpirationDate;
     	}
@@ -111,12 +114,18 @@ public class JwtUtils {
     }
 
     private Claims extractAllClaims(String token){
-        return Jwts
+
+        try {
+            return Jwts
                 .parser()
                 .verifyWith(getSignInKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+        } catch (JwtException e) {
+            throw new IllegalArgumentException("Invalid JWT token ", e);
+        }
+                
     }
 
     private SecretKey getSignInKey() {

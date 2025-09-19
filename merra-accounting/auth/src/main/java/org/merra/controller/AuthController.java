@@ -8,6 +8,7 @@ import org.merra.api.ApiError;
 import org.merra.api.ApiResponse;
 import org.merra.config.JwtUtils;
 import org.merra.dto.AuthResponse;
+import org.merra.dto.JwtTokens;
 import org.merra.dto.LoginRequest;
 import org.merra.dto.SignupRequest;
 import org.merra.dto.TokenRequest;
@@ -50,16 +51,11 @@ public class AuthController {
     public ResponseEntity<?> tokens(@Valid @RequestBody TokenRequest request) {
     	UserDetails userDetails = userDetailsService.loadUserByUsername(request.userEmail());
     	
-    	boolean IS_TOKEN_VALID = jwtUtils.isTokenValid(request.refreshToken(), userDetails);
-        if (!IS_TOKEN_VALID){
-        	return new ResponseEntity<>(
-        			AuthConstantResponses.INVALID_REFRESH_TOKEN,
-        			HttpStatus.UNAUTHORIZED
-        	);
-        }
+    	final boolean IS_TOKEN_VALID = jwtUtils.isTokenValid(request.refreshToken(), userDetails);
+        if (!IS_TOKEN_VALID) return new ResponseEntity<>(AuthConstantResponses.INVALID_REFRESH_TOKEN, HttpStatus.UNAUTHORIZED);
         
         final Map<String, String> jwtToken = jwtUtils.generateToken(userDetails);
-        AuthResponse.Tokens tokens = new AuthResponse.Tokens(
+        JwtTokens tokens = new JwtTokens(
         		jwtToken.get("accessToken"),
         		jwtToken.get("refreshToken")
         );
@@ -96,7 +92,7 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
         AuthResponse authResponse = new AuthResponse(
-        		new AuthResponse.Tokens(jwtTokens.get("accessToken"), jwtTokens.get("refreshToken")),
+        		new JwtTokens(jwtTokens.get("accessToken"), jwtTokens.get("refreshToken")),
         		getUser.getUsername(),
         		roles
         );
@@ -145,7 +141,7 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
         AuthResponse authResponse = new AuthResponse(
-        		new AuthResponse.Tokens(jwtToken.get("accessToken"), jwtToken.get("refreshToken")),
+        		new JwtTokens(jwtToken.get("accessToken"), jwtToken.get("refreshToken")),
         		newUser.getUsername(),
         		roles
         );
