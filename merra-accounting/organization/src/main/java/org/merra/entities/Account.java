@@ -20,18 +20,10 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @SQLRestriction("archived <> true")
 @Table(name = "ledger_account", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class Account {
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "account_id", nullable = false, unique = true)
@@ -120,6 +112,149 @@ public class Account {
 		}
 		return null;
 	}
+
+	public Account() {
+	}
+
+	public Account(UUID accountId, Organization organization,
+			@NotBlank(message = "code attribute cannot be blank.") String code,
+			@NotBlank(message = "accountName attribute cannote be blank.") String accountName,
+			@NotNull(message = "category attribute cannot be null.") AccountCategory category,
+			@NotNull(message = "accountType attribute cannot be null.") AccountType accountType, String status,
+			@NotBlank(message = "description attribute cannot be blank.") String description, String taxType,
+			boolean enablePaymentToAccount, LocalDate updatedDate, boolean addToWatchList, boolean archived) {
+		this.accountId = accountId;
+		this.organization = organization;
+		this.code = code;
+		this.accountName = accountName;
+		this.category = category;
+		this.accountType = accountType;
+		this.status = status;
+		this.description = description;
+		this.taxType = taxType;
+		this.enablePaymentToAccount = enablePaymentToAccount;
+		this.updatedDate = updatedDate;
+		this.addToWatchList = addToWatchList;
+		this.archived = archived;
+	}
+
+	public Account(Organization organization, @NotBlank(message = "code attribute cannot be blank.") String code,
+			@NotBlank(message = "accountName attribute cannote be blank.") String accountName,
+			@NotNull(message = "category attribute cannot be null.") AccountCategory category,
+			@NotNull(message = "accountType attribute cannot be null.") AccountType accountType, String status,
+			@NotBlank(message = "description attribute cannot be blank.") String description, String taxType,
+			boolean enablePaymentToAccount, LocalDate updatedDate, boolean addToWatchList, boolean archived) {
+		this.organization = organization;
+		this.code = code;
+		this.accountName = accountName;
+		this.category = category;
+		this.accountType = accountType;
+		this.status = status;
+		this.description = description;
+		this.taxType = taxType;
+		this.enablePaymentToAccount = enablePaymentToAccount;
+		this.updatedDate = updatedDate;
+		this.addToWatchList = addToWatchList;
+		this.archived = archived;
+	}
+
+	public UUID getAccountId() {
+		return accountId;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public AccountCategory getCategory() {
+		return category;
+	}
+
+	public AccountType getAccountType() {
+		return accountType;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getTaxType() {
+		return taxType;
+	}
+
+	public boolean isEnablePaymentToAccount() {
+		return enablePaymentToAccount;
+	}
+
+	public LocalDate getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public boolean isAddToWatchList() {
+		return addToWatchList;
+	}
+
+	public boolean isArchived() {
+		return archived;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public void setCategory(AccountCategory category) {
+		this.category = category;
+	}
+
+	public void setAccountType(AccountType accountType) {
+		this.accountType = accountType;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setTaxType(String taxType) {
+		this.taxType = taxType;
+	}
+
+	public void setEnablePaymentToAccount(boolean enablePaymentToAccount) {
+		this.enablePaymentToAccount = enablePaymentToAccount;
+	}
+
+	public void setUpdatedDate(LocalDate updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	public void setAddToWatchList(boolean addToWatchList) {
+		this.addToWatchList = addToWatchList;
+	}
+
+	public void setArchived(boolean archived) {
+		this.archived = archived;
+	}
+
+	
 	
 }
 

@@ -9,17 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity(name = "ContactPaymentTerms")
 @Table(name = "payment_terms", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class PaymentTerms {
 	
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,4 +23,27 @@ public class PaymentTerms {
 	private String label;
 	
 	private String description;
+
+	public PaymentTerms() {
+	}
+	public PaymentTerms(String label, String description) {
+		this.label = label;
+		this.description = description;
+	}
+	public UUID getId() {
+		return id;
+	}
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 }

@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 
 /**
  * When you select an AccountCode for a line item,
@@ -39,7 +38,6 @@ import lombok.RequiredArgsConstructor;
  * in your API request.
  */
 @Service
-@RequiredArgsConstructor
 public class InvoiceService {
 
 	private final OrganizationRepository organizationRepository;
@@ -51,6 +49,28 @@ public class InvoiceService {
 	private final AccountRepository accountRepository;
 	private final TaxRateRepository taxRateRepository;
 	private final TaxTypeRepository taxTypeRepository;
+
+	public InvoiceService(
+			OrganizationRepository organizationRepository,
+			OrganizationSettingsRepository organizationSettingsRepository,
+			InvoiceRepository invoiceRepository,
+			ContactRepository contactRepository,
+			ContactService contactService,
+			JournalService journalService,
+			AccountRepository accountRepository,
+			TaxRateRepository taxRateRepository,
+			TaxTypeRepository taxTypeRepository
+	) {
+		this.organizationRepository = organizationRepository;
+		this.organizationSettingsRepository = organizationSettingsRepository;
+		this.invoiceRepository = invoiceRepository;
+		this.contactRepository = contactRepository;
+		this.contactService = contactService;
+		this.journalService = journalService;
+		this.accountRepository = accountRepository;
+		this.taxRateRepository = taxRateRepository;
+		this.taxTypeRepository = taxTypeRepository;
+	}
 	
 	/**
 	 * When the user creates an invoice (e.g. clicks the button for creating

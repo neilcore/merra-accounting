@@ -76,13 +76,6 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <optional>true</optional>
-        <scope>provided</scope>
-        <version>1.18.38</version>
-      </dependency>
-      <dependency>
       	<groupId>me.paulschwarz</groupId>
 		<artifactId>spring-dotenv</artifactId>
 		<version>4.0.0</version>
@@ -94,12 +87,6 @@
 	  	<groupId>org.springdoc</groupId>
 	    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 	  </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <optional>true</optional>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
@@ -120,16 +107,6 @@
               <groupId>org.mapstruct</groupId>
               <artifactId>mapstruct-processor</artifactId>
               <version>1.6.3</version>
-            </path>
-            <path>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-              <version>1.18.38</version>
-            </path>
-            <path>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok-mapstruct-binding</artifactId>
-              <version>0.2.0</version>
             </path>
           </annotationProcessorPaths>
           <showWarnings>true</showWarnings>

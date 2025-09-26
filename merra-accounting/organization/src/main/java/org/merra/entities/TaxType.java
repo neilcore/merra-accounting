@@ -14,10 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * OUTPUT: This is typically used for sales tax (Accounts Receivable).
@@ -30,10 +26,6 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "tax_type", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Data
 public class TaxType {
 
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -48,4 +40,27 @@ public class TaxType {
 	@Column(name = "type_collections", columnDefinition = "jsonb", nullable = false)
 	@NotNull(message = "typeCollections attribute cannot be null.")
 	private Set<TaxTypes> typeCollections;
+
+	public TaxType() {
+	}
+	public TaxType(String label, Set<TaxTypes> typeCollections) {
+		this.label = label;
+		this.typeCollections = typeCollections;
+	}
+	public UUID getId() {
+		return id;
+	}
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	public Set<TaxTypes> getTypeCollections() {
+		return typeCollections;
+	}
+	public void setTypeCollections(Set<TaxTypes> typeCollections) {
+		this.typeCollections = typeCollections;
+	}
+	
 }

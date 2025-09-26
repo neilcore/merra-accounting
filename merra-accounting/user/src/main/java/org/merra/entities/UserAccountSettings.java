@@ -13,17 +13,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user_account_settings", schema = "merra_schema")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class UserAccountSettings {
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "user_setting_id", nullable = false, unique = true)
@@ -40,6 +32,35 @@ public class UserAccountSettings {
 	 * when invited to an organization
 	 */
 	@Column(name = "auto_accept_invitation", nullable = false)
-	@Builder.Default
 	private Boolean autoAcceptInvitation = true;
+
+	public UserAccountSettings() {
+	}
+
+	public UserAccountSettings(@NotNull(message = "userAccount cannot be null.") UserAccount userAccount) {
+		this.userAccount = userAccount;
+		this.autoAcceptInvitation = true;
+	}
+
+	public UUID getUserSettingId() {
+		return userSettingId;
+	}
+
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
+	public Boolean getAutoAcceptInvitation() {
+		return autoAcceptInvitation;
+	}
+
+	public void setAutoAcceptInvitation(Boolean autoAcceptInvitation) {
+		this.autoAcceptInvitation = autoAcceptInvitation;
+	}
+
+	
 }

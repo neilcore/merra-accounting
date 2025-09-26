@@ -13,14 +13,22 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class ContactService {
 	private final OrganizationRepository organizationRepository;
 	private final ContactRepository contactRepository;
 	private final ContactMapper contactMapper;
+
+	public ContactService(
+			OrganizationRepository organizationRepository,
+			ContactRepository contactRepository,
+			ContactMapper contactMapper
+	) {
+		this.organizationRepository = organizationRepository;
+		this.contactRepository = contactRepository;
+		this.contactMapper = contactMapper;
+	}
 	/**
 	 * This method will create a contact object that contains only the name field.
 	 * useful when creating invoice and creating new contact.

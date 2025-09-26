@@ -10,6 +10,7 @@ import java.util.function.Function;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.lang.Objects;
 import io.jsonwebtoken.security.Keys;
 
 @Component
@@ -57,11 +57,7 @@ public class JwtUtils {
      * @param userDetails - accepts {@linkplain UserDetails} object type.
      * @return - {@linkplain java.util.Map}
      */
-    public Map<String, String> generateToken(
-    		Map<String, Object> extractClaims,
-    		UserDetails userDetails,
-    		String duration
-    ) {
+    public Map<String, String> generateToken(Map<String, Object> extractClaims, @NonNull UserDetails userDetails, String duration) {
     	Map<String, String> tokens = new HashMap<>();
     	String tokenType = null;
     	Date expirationDate = null;
@@ -76,7 +72,8 @@ public class JwtUtils {
             Date refreshTokenExpirationDate = cal.getTime();
             expirationDate = refreshTokenExpirationDate;
     	}
-        String tokenBuild = Jwts
+
+        final String tokenBuild = Jwts
                 .builder()
                 .claims(extractClaims)
                 .subject(userDetails.getUsername())

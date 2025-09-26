@@ -23,19 +23,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "user_account", schema="merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder
 public class UserAccount implements UserDetails {
 	
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -64,17 +54,14 @@ public class UserAccount implements UserDetails {
 	
     @Column(name = "account_role", nullable = false)
     @NotNull(message = "Roles cannot be null")
-    @Builder.Default
     private String roles = "NONE";
     
     // A user by default doesn't own any organization
     @Column(name = "is_owner", nullable = false)
-    @Builder.Default
     private boolean isOwner = false;
     
     // A user by default isn't part of any organization
     @Column(name = "part_of_organization", nullable = false)
-    @Builder.Default
     private boolean partOfOrganization = false;
     
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userAccount")
@@ -94,4 +81,102 @@ public class UserAccount implements UserDetails {
     public String getPassword() {
         return this.accountPassword;
     }
+
+	public UserAccount() {
+	}
+
+	public UserAccount(@Email(message = "Email should be valid") String email,
+			@NotBlank(message = "First name is mandatory") String firstName,
+			@NotBlank(message = "Last name is mandatory") String lastName,
+			@NotNull(message = "accountPassword cannot be null.") String accountPassword,
+			Map<String, String> contactNumber, @NotNull(message = "Roles cannot be null") String roles, boolean isOwner,
+			boolean partOfOrganization, UserAccountSettings accountSettings) {
+		this.email = email;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.accountPassword = accountPassword;
+		this.contactNumber = contactNumber;
+		this.roles = roles;
+		this.isOwner = isOwner;
+		this.partOfOrganization = partOfOrganization;
+		this.accountSettings = accountSettings;
+	}
+
+	public UUID getUserId() {
+		return userId;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getAccountPassword() {
+		return accountPassword;
+	}
+
+	public void setAccountPassword(String accountPassword) {
+		this.accountPassword = accountPassword;
+	}
+
+	public Map<String, String> getContactNumber() {
+		return contactNumber;
+	}
+
+	public void setContactNumber(Map<String, String> contactNumber) {
+		this.contactNumber = contactNumber;
+	}
+
+	public String getRoles() {
+		return roles;
+	}
+
+	public void setRoles(String roles) {
+		this.roles = roles;
+	}
+
+	public boolean isOwner() {
+		return isOwner;
+	}
+
+	public void setOwner(boolean isOwner) {
+		this.isOwner = isOwner;
+	}
+
+	public boolean isPartOfOrganization() {
+		return partOfOrganization;
+	}
+
+	public void setPartOfOrganization(boolean partOfOrganization) {
+		this.partOfOrganization = partOfOrganization;
+	}
+
+	public UserAccountSettings getAccountSettings() {
+		return accountSettings;
+	}
+
+	public void setAccountSettings(UserAccountSettings accountSettings) {
+		this.accountSettings = accountSettings;
+	}
+
+	
 }

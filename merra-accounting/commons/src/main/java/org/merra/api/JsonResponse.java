@@ -4,13 +4,7 @@ import org.springframework.http.HttpStatus;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@NoArgsConstructor
-@Getter
-@Setter
 sealed class JsonResponse permits ApiError, ApiResponse {
 	
 	@NotBlank(message = "message attribute cannot be blank.")
@@ -27,4 +21,32 @@ sealed class JsonResponse permits ApiError, ApiResponse {
 		this.result = result;
 		this.response = status;
 	}
+
+	public JsonResponse(){}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public boolean isResult() {
+		return result;
+	}
+
+	public void setResult(boolean result) {
+		this.result = result;
+	}
+
+	public HttpStatus getResponse() {
+		return response;
+	}
+
+	public void setResponse(HttpStatus response) {
+		this.response = response;
+	}
+
+	
 }

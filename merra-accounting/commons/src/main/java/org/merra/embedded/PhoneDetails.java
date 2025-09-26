@@ -3,13 +3,7 @@ package org.merra.embedded;
 import java.io.Serializable;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@NoArgsConstructor
-@Getter
-@Setter
 public class PhoneDetails implements Serializable {
 	/**
 	 * 
@@ -45,4 +39,42 @@ public class PhoneDetails implements Serializable {
 	public void setIsDefault(Boolean isDefault) {
 		this.isDefault = isDefault ? Boolean.TRUE : Boolean.FALSE;
 	}
+
+	public String getPhoneType() {
+		return phoneType;
+	}
+
+	public void setPhoneType(String phoneType) {
+		this.phoneType = phoneType;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getPhoneAreaCode() {
+		return phoneAreaCode;
+	}
+
+	public void setPhoneAreaCode(String phoneAreaCode) {
+		this.phoneAreaCode = phoneAreaCode;
+	}
+
+	public String getPhoneCountryCode() {
+		return phoneCountryCode;
+	}
+
+	public void setPhoneCountryCode(String phoneCountryCode) {
+		this.phoneCountryCode = phoneCountryCode;
+	}
+
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	
 }

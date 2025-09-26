@@ -4,15 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ExternalLinks implements Serializable {	
 	/**
 	 * 
@@ -37,4 +29,27 @@ public class ExternalLinks implements Serializable {
 			this.linkType = linkType.toUpperCase();
 		}
 	}
+
+	public String getLinkType() {
+		return linkType;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public ExternalLinks(@NotNull(message = "linkType attribute cannot be null.") String linkType,
+			@NotNull(message = "url attribute cannot be null.") String url) {
+		this.linkType = linkType;
+		this.url = url;
+	}
+
+	public ExternalLinks() {
+	}
+
+	
 }

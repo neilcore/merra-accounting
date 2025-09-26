@@ -4,16 +4,8 @@ package org.merra.entities.embedded;
 import java.io.Serializable;
 
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Embeddable
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class InvoiceSettings implements Serializable {
 	/**
 	 * 
@@ -26,4 +18,25 @@ public class InvoiceSettings implements Serializable {
 		// DRAFT is the default status
 		this.status = stat.isBlank() ? "DRAFT" : stat;
 	}
+
+	public String getDefaultLineAmountType() {
+		return defaultLineAmountType;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setDefaultLineAmountType(String defaultLineAmountType) {
+		this.defaultLineAmountType = defaultLineAmountType;
+	}
+
+	public InvoiceSettings() {
+	}
+
+	public InvoiceSettings(String defaultLineAmountType, String status) {
+		this.defaultLineAmountType = defaultLineAmountType;
+		this.status = status;
+	}
+
 }

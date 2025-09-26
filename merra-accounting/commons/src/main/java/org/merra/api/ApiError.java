@@ -3,17 +3,12 @@ package org.merra.api;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Arrays;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@NoArgsConstructor
-@Getter
-@Setter
 public final class ApiError extends JsonResponse {
 	
 	@NotEmpty(message = "errors attribute cannot be empty.")
@@ -27,5 +22,13 @@ public final class ApiError extends JsonResponse {
     public ApiError(String message, Boolean result, HttpStatus response, String error) {
     	super(message, result, response);
         this.errors = Arrays.asList(error);
+    }
+
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
     }
 }

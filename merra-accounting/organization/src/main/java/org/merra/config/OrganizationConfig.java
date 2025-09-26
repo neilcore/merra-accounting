@@ -8,14 +8,19 @@ import org.merra.repositories.AccountRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
-@RequiredArgsConstructor
 public class OrganizationConfig implements CommandLineRunner {
 
     private final AccountRepository accountRepository;
 	private final AccountCategoryRepository accountCategoryRepository;
+
+	public OrganizationConfig(
+			AccountRepository accountRepository,
+			AccountCategoryRepository accountCategoryRepository
+	) {
+		this.accountRepository = accountRepository;
+		this.accountCategoryRepository = accountCategoryRepository;
+	}
 	
 	@Override
 	public void run(String... args) throws Exception {

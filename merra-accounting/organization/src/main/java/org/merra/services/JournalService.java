@@ -27,14 +27,20 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 
 // TODO - work on the taxes part
 @Service
-@RequiredArgsConstructor
 public class JournalService {
 	private final AccountRepository accountRepository;
 	private final JournalRepository journalRepository;
+
+	public JournalService(
+			AccountRepository accountRepository,
+			JournalRepository journalRepository
+	) {
+		this.accountRepository = accountRepository;
+		this.journalRepository = journalRepository;
+	}
 	
 	@Transactional
 	public void entry(

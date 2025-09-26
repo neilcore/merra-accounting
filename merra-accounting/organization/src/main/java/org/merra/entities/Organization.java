@@ -35,19 +35,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "organization", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@ToString
 public class Organization {
 
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -120,7 +110,6 @@ public class Organization {
 	@Email(message = "Email attribute should be valid")
 	private String email;
 	
-	@ToString.Exclude
 	private String website;
 	
 //	@OneToOne(fetch = FetchType.LAZY, mappedBy = "organization")
@@ -202,5 +191,234 @@ public class Organization {
 		this.setWebsite(website);
 		this.setExternalLinks(externalLinks);
 	}
+
+	public Organization() {
+	}
+
+	public Organization(UUID id, @NotNull(message = "profile_image") String profileImage,
+			Set<OrganizationNameUpdate> nameDetailsUpdate, Set<OrganizationUsers> organizationUsers,
+			Set<OrganizationUserInvites> organizationUserInvites,
+			@NotBlank(message = "displayName attribute cannot be blank.") String displayName,
+			@NotBlank(message = "legalName cannot be blank.") String legalName, String organizationDescription,
+			@NotNull(message = "country attribute cannot be null.") String country,
+			@NotNull(message = "defaultCurrency attribute cannot be null.") DefaultCurrency defaultCurrency,
+			@NotNull(message = "organizationType attribute cannot be null.") OrganizationType organizationType,
+			LinkedHashSet<PhoneDetails> phoneNo,
+			@NotBlank(message = "Email is mandatory") @Email(message = "Email attribute should be valid") String email,
+			String website, @NotBlank(message = "timeZone attribute is required.") String timeZone,
+			Map<String, Integer> financialYear,
+			@NotNull(message = "Address attribute cannot be null.") Set<Map<String, String>> address,
+			Set<ExternalLinks> externalLinks,
+			@NotNull(message = "paymentTerms attribute cannot be null.") Map<String, String> paymentTerms,
+			CreatedDate createdDate, Boolean activeSubscription, Status status) {
+		this(profileImage, nameDetailsUpdate, organizationUsers, organizationUserInvites, displayName, legalName,
+				organizationDescription, country, defaultCurrency, organizationType, phoneNo, email, website, timeZone,
+				financialYear, address, externalLinks, paymentTerms, createdDate, activeSubscription, status);
+		this.id = id;
+	}
+
+	public Organization(@NotNull(message = "profile_image") String profileImage,
+			Set<OrganizationNameUpdate> nameDetailsUpdate, Set<OrganizationUsers> organizationUsers,
+			Set<OrganizationUserInvites> organizationUserInvites,
+			@NotBlank(message = "displayName attribute cannot be blank.") String displayName,
+			@NotBlank(message = "legalName cannot be blank.") String legalName, String organizationDescription,
+			@NotNull(message = "country attribute cannot be null.") String country,
+			@NotNull(message = "defaultCurrency attribute cannot be null.") DefaultCurrency defaultCurrency,
+			@NotNull(message = "organizationType attribute cannot be null.") OrganizationType organizationType,
+			LinkedHashSet<PhoneDetails> phoneNo,
+			@NotBlank(message = "Email is mandatory") @Email(message = "Email attribute should be valid") String email,
+			String website, @NotBlank(message = "timeZone attribute is required.") String timeZone,
+			Map<String, Integer> financialYear,
+			@NotNull(message = "Address attribute cannot be null.") Set<Map<String, String>> address,
+			Set<ExternalLinks> externalLinks,
+			@NotNull(message = "paymentTerms attribute cannot be null.") Map<String, String> paymentTerms,
+			CreatedDate createdDate, Boolean activeSubscription, Status status) {
+		this.profileImage = profileImage;
+		this.nameDetailsUpdate = nameDetailsUpdate;
+		this.organizationUsers = organizationUsers;
+		this.organizationUserInvites = organizationUserInvites;
+		this.displayName = displayName;
+		this.legalName = legalName;
+		this.organizationDescription = organizationDescription;
+		this.country = country;
+		this.defaultCurrency = defaultCurrency;
+		this.organizationType = organizationType;
+		this.phoneNo = phoneNo;
+		this.email = email;
+		this.website = website;
+		this.timeZone = timeZone;
+		this.financialYear = financialYear;
+		this.address = address;
+		this.externalLinks = externalLinks;
+		this.paymentTerms = paymentTerms;
+		this.createdDate = createdDate;
+		this.activeSubscription = activeSubscription;
+		this.status = status;
+	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public String getProfileImage() {
+		return profileImage;
+	}
+
+	public void setProfileImage(String profileImage) {
+		this.profileImage = profileImage;
+	}
+
+	public Set<OrganizationNameUpdate> getNameDetailsUpdate() {
+		return nameDetailsUpdate;
+	}
+
+	public void setNameDetailsUpdate(Set<OrganizationNameUpdate> nameDetailsUpdate) {
+		this.nameDetailsUpdate = nameDetailsUpdate;
+	}
+
+	public Set<OrganizationUsers> getOrganizationUsers() {
+		return organizationUsers;
+	}
+
+	public void setOrganizationUsers(Set<OrganizationUsers> organizationUsers) {
+		this.organizationUsers = organizationUsers;
+	}
+
+	public Set<OrganizationUserInvites> getOrganizationUserInvites() {
+		return organizationUserInvites;
+	}
+
+	public void setOrganizationUserInvites(Set<OrganizationUserInvites> organizationUserInvites) {
+		this.organizationUserInvites = organizationUserInvites;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getLegalName() {
+		return legalName;
+	}
+
+	public void setLegalName(String legalName) {
+		this.legalName = legalName;
+	}
+
+	public String getOrganizationDescription() {
+		return organizationDescription;
+	}
+
+	public void setOrganizationDescription(String organizationDescription) {
+		this.organizationDescription = organizationDescription;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public DefaultCurrency getDefaultCurrency() {
+		return defaultCurrency;
+	}
+
+	public void setDefaultCurrency(DefaultCurrency defaultCurrency) {
+		this.defaultCurrency = defaultCurrency;
+	}
+
+	public OrganizationType getOrganizationType() {
+		return organizationType;
+	}
+
+	public void setOrganizationType(OrganizationType organizationType) {
+		this.organizationType = organizationType;
+	}
+
+	public LinkedHashSet<PhoneDetails> getPhoneNo() {
+		return phoneNo;
+	}
+
+	public void setPhoneNo(LinkedHashSet<PhoneDetails> phoneNo) {
+		this.phoneNo = phoneNo;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
+
+	public Map<String, Integer> getFinancialYear() {
+		return financialYear;
+	}
+
+	public void setFinancialYear(Map<String, Integer> financialYear) {
+		this.financialYear = financialYear;
+	}
+
+	public Set<Map<String, String>> getAddress() {
+		return address;
+	}
+
+	public void setAddress(Set<Map<String, String>> address) {
+		this.address = address;
+	}
+
+	public Set<ExternalLinks> getExternalLinks() {
+		return externalLinks;
+	}
+
+	public void setExternalLinks(Set<ExternalLinks> externalLinks) {
+		this.externalLinks = externalLinks;
+	}
+
+	public Map<String, String> getPaymentTerms() {
+		return paymentTerms;
+	}
+
+	public void setPaymentTerms(Map<String, String> paymentTerms) {
+		this.paymentTerms = paymentTerms;
+	}
+
+	public CreatedDate getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(CreatedDate createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Boolean getActiveSubscription() {
+		return activeSubscription;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
 	
 }

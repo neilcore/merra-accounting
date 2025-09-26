@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 /**
  * x-organization-id header is required for
@@ -30,9 +29,12 @@ import lombok.RequiredArgsConstructor;
  */
 @RestController
 @RequestMapping("api/v1/business/organization/")
-@RequiredArgsConstructor
 public class OrganizationController {
 	private final OrganizationService organizationService;
+
+	public OrganizationController(OrganizationService organizationService) {
+		this.organizationService = organizationService;
+	}
 	
 	@GetMapping("test")
 	public ResponseEntity<String> organizationTest() {

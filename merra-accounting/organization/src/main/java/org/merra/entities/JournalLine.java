@@ -19,19 +19,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "journal_line", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Getter
-@Setter
 public class JournalLine {
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
@@ -53,4 +43,68 @@ public class JournalLine {
 	
 	@Column(columnDefinition = "numeric(7,2)")
 	private BigDecimal debit;
+
+	public JournalLine() {
+	}
+
+	public JournalLine(UUID id, Journal journal,
+			@NotNull(message = "accountDetails attribute cannot be null.") AccountDetail accountDetails,
+			String description, BigDecimal credit, BigDecimal debit) {
+		this(journal, accountDetails, description, credit, debit);
+		this.id = id;
+	}
+
+	public JournalLine(Journal journal,
+			@NotNull(message = "accountDetails attribute cannot be null.") AccountDetail accountDetails,
+			String description, BigDecimal credit, BigDecimal debit) {
+		this.journal = journal;
+		this.accountDetails = accountDetails;
+		this.description = description;
+		this.credit = credit;
+		this.debit = debit;
+	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public Journal getJournal() {
+		return journal;
+	}
+
+	public void setJournal(Journal journal) {
+		this.journal = journal;
+	}
+
+	public AccountDetail getAccountDetails() {
+		return accountDetails;
+	}
+
+	public void setAccountDetails(AccountDetail accountDetails) {
+		this.accountDetails = accountDetails;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public BigDecimal getCredit() {
+		return credit;
+	}
+
+	public void setCredit(BigDecimal credit) {
+		this.credit = credit;
+	}
+
+	public BigDecimal getDebit() {
+		return debit;
+	}
+
+	public void setDebit(BigDecimal debit) {
+		this.debit = debit;
+	}
 }

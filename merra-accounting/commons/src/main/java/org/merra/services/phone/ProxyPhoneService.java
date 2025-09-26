@@ -5,16 +5,18 @@ import java.util.Optional;
 
 import org.merra.embedded.PhoneDetails;
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
 
 /**
  * In this phone service. country codes on every phone details
  * are required and must be checked before proceeding.
  */
 @Service
-@RequiredArgsConstructor
 public final class ProxyPhoneService implements PhoneServiceInterface {
 	private final PhoneService phoneService;
+
+	public ProxyPhoneService(PhoneService phoneService) {
+		this.phoneService = phoneService;
+	}
 	
 	@Override
 	public LinkedHashSet<PhoneDetails> validatePhones(LinkedHashSet<PhoneDetails> phones,

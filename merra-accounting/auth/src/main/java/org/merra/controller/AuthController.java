@@ -34,11 +34,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("api/auth/")
-@RequiredArgsConstructor
 public class AuthController {
 	private final UserDetailsService userDetailsService;
 	private final JwtUtils jwtUtils;
@@ -46,7 +44,28 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final UserAccountRepository userRepository;
     private final UserAccountService userAccountService;
+
+    public AuthController(
+    		UserDetailsService userDetailsService,
+    		JwtUtils jwtUtils,
+            AuthenticationManager authenticationManager,
+            PasswordEncoder passwordEncoder,
+            UserAccountRepository userRepository,
+            UserAccountService userAccountService
+    ) {
+        this.userDetailsService = userDetailsService;
+        this.jwtUtils = jwtUtils;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+        this.userAccountService = userAccountService;
+    }
     
+    /**
+     * Generate new access & refresh token
+     * @param request TokenRequest oject type.
+     * @return
+     */
     @PostMapping("tokens")
     public ResponseEntity<?> tokens(@Valid @RequestBody TokenRequest request) {
     	UserDetails userDetails = userDetailsService.loadUserByUsername(request.userEmail());
@@ -85,7 +104,7 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserAccount getUser = userRepository
-        		.findUserByEmailIgnoreCase(loginRequest.email()).get();
+        	.findUserByEmailIgnoreCase(loginRequest.email()).get();
         
         Map<String, String> jwtTokens = jwtUtils.generateToken(getUser);
         List<String> roles = getUser.getAuthorities().stream()
@@ -93,7 +112,7 @@ public class AuthController {
                 .toList();
         AuthResponse authResponse = new AuthResponse(
         		new JwtTokens(jwtTokens.get("accessToken"), jwtTokens.get("refreshToken")),
-        		getUser.getUsername(),
+        		new AuthResponse.UserDetail(getUser.getUserId(), getUser.getEmail()),
         		roles
         );
         
@@ -120,13 +139,12 @@ public class AuthController {
             return ResponseEntity.badRequest().body(apiError);
         }
         
-        UserAccount userBuilder = UserAccount.builder()
-        		.firstName(signupRequest.firstName())
-        		.lastName(signupRequest.lastName())
-        		.email(signupRequest.email())
-        		.accountPassword(passwordEncoder.encode(signupRequest.password()))
-        		.roles(Roles.NONE.toString()) // By default user account don't have a role yet
-        		.build();
+        UserAccount userBuilder = new UserAccount();
+        userBuilder.setFirstName(signupRequest.firstName());
+        userBuilder.setLastName(signupRequest.lastName());
+        userBuilder.setEmail(signupRequest.email());
+        userBuilder.setAccountPassword(passwordEncoder.encode(signupRequest.password()));
+        userBuilder.setRoles(Roles.NONE.toString()); // By default user account don't have a
 
         UserAccount newUser = userRepository.save(userBuilder);
         
@@ -142,7 +160,7 @@ public class AuthController {
                 .toList();
         AuthResponse authResponse = new AuthResponse(
         		new JwtTokens(jwtToken.get("accessToken"), jwtToken.get("refreshToken")),
-        		newUser.getUsername(),
+        		new AuthResponse.UserDetail(newUser.getUserId(), newUser.getEmail()),
         		roles
         );
 

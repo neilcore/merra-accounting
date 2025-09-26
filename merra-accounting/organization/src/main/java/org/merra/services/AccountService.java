@@ -21,17 +21,29 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 
 // This class will handle the chart of accounts
 @Service
-@RequiredArgsConstructor
 public class AccountService {
 	private final AccountMapper accountMapper;
 	private final AccountCategoryRepository accountCategoryRepository;
 	private final AccountRepository accountRepository;
 	private final AccountTypeRepository accountTypeRepository;
 	private final InvoiceRepository invoiceRepository;
+
+	public AccountService(
+			AccountMapper accountMapper,
+			AccountCategoryRepository accountCategoryRepository,
+			AccountRepository accountRepository,
+			AccountTypeRepository accountTypeRepository,
+			InvoiceRepository invoiceRepository
+	) {
+		this.accountMapper = accountMapper;
+		this.accountCategoryRepository = accountCategoryRepository;
+		this.accountRepository = accountRepository;
+		this.accountTypeRepository = accountTypeRepository;
+		this.invoiceRepository = invoiceRepository;
+	}
 	
 	public AccountResponse createAccount() {
 		return null;

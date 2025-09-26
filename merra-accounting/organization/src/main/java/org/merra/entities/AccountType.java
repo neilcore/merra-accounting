@@ -9,15 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "account_type", schema = "merra_schema")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class AccountType {
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
@@ -32,4 +26,35 @@ public class AccountType {
 		this.name = name;
 		this.description = description;
 	}
+
+
+	public AccountType() {
+	}
+
+
+	public UUID getId() {
+		return id;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public String getDescription() {
+		return description;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	
 }

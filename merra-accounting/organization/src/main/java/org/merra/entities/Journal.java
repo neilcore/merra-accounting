@@ -21,20 +21,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * TODO - TO BE CONTINUED.
  */
 @Entity
 @Table(name = "journal", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class Journal {
 	
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -66,4 +58,65 @@ public class Journal {
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(name = "total", columnDefinition = "jsonb")
 	private JournalTotalAmountEntry total;
+
+	public Journal() {
+	}
+
+	public Journal(UUID journalId, @NotNull(message = "journalDate attribute cannot be null.") LocalDate journalDate,
+			BigInteger journalNumber,
+			@NotEmpty(message = "journalLines attribute cannot be empty.") List<JournalLine> journalLines,
+			JournalTotalAmountEntry total) {
+		this(journalDate, journalNumber, journalLines, total);
+		this.journalId = journalId;
+	}
+
+	public Journal(@NotNull(message = "journalDate attribute cannot be null.") LocalDate journalDate,
+			BigInteger journalNumber,
+			@NotEmpty(message = "journalLines attribute cannot be empty.") List<JournalLine> journalLines,
+			JournalTotalAmountEntry total) {
+		this.journalDate = journalDate;
+		this.journalNumber = journalNumber;
+		this.journalLines = journalLines;
+		this.total = total;
+	}
+
+	public UUID getJournalId() {
+		return journalId;
+	}
+
+	public LocalDate getJournalDate() {
+		return journalDate;
+	}
+
+	public void setJournalDate(LocalDate journalDate) {
+		this.journalDate = journalDate;
+	}
+
+	public BigInteger getJournalNumber() {
+		return journalNumber;
+	}
+
+	public void setJournalNumber(BigInteger journalNumber) {
+		this.journalNumber = journalNumber;
+	}
+
+	public List<JournalLine> getJournalLines() {
+		return journalLines;
+	}
+
+	public void setJournalLines(List<JournalLine> journalLines) {
+		this.journalLines = journalLines;
+	}
+
+	public JournalTotalAmountEntry getTotal() {
+		return total;
+	}
+
+	public void setTotal(JournalTotalAmountEntry total) {
+		this.total = total;
+	}
+
+	
+
+	
 }

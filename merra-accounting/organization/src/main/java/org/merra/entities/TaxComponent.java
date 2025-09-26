@@ -15,17 +15,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "tax_component", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class TaxComponent {
 
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -58,5 +50,54 @@ public class TaxComponent {
 		this.isCompound = isCompound;
 		this.nonRecoverable = nonRecoverable;
 	}
+
+	public TaxComponent() {
+	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public TaxRate getTaxRate() {
+		return taxRate;
+	}
+
+	public void setTaxRate(TaxRate taxRate) {
+		this.taxRate = taxRate;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public BigDecimal getRate() {
+		return rate;
+	}
+
+	public void setRate(BigDecimal rate) {
+		this.rate = rate;
+	}
+
+	public Boolean getIsCompound() {
+		return isCompound;
+	}
+
+	public void setIsCompound(Boolean isCompound) {
+		this.isCompound = isCompound;
+	}
+
+	public Boolean getNonRecoverable() {
+		return nonRecoverable;
+	}
+
+	public void setNonRecoverable(Boolean nonRecoverable) {
+		this.nonRecoverable = nonRecoverable;
+	}
+
+	
 }
 

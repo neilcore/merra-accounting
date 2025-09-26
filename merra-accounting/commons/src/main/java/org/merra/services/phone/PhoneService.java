@@ -15,18 +15,20 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 
 /**
  * This service will validate and transform phone numbers.
  */
 @Service
-@RequiredArgsConstructor
 public final class PhoneService implements PhoneServiceInterface {
 	private Set<String> phoneTypes;
 	private PhoneNumberUtil UTIL;
 	
 	private final CountryService countryService;
+
+	public PhoneService(CountryService countryService) {
+		this.countryService = countryService;
+	}
 	
 	@PostConstruct
 	private void init() {

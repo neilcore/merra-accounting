@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.merra.dto.UserDetailResponse;
 import org.merra.entities.UserAccount;
 import org.merra.entities.UserAccountSettings;
 import org.merra.enums.Roles;
@@ -12,19 +13,25 @@ import org.merra.repositories.UserAccountSettingsRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
-@RequiredArgsConstructor
 public class UserAccountService {
 	private final UserAccountRepository userRepository;
 	private final UserAccountSettingsRepository accountSettingsRepository;
+
+	public UserAccountService(
+			UserAccountRepository userRepository,
+			UserAccountSettingsRepository accountSettingsRepository
+	) {
+		this.userRepository = userRepository;
+		this.accountSettingsRepository = accountSettingsRepository;
+	}
 	
 	// TODO - createUserAccountSetting() must test this method
 	public void createUserAccountSetting(UserAccount account) {
-        UserAccountSettings accountSettings = UserAccountSettings.builder()
-        		.userAccount(account)
-        		.build();
+        UserAccountSettings accountSettings = new UserAccountSettings(account);
+
 		try {
 			accountSettingsRepository.save(accountSettings);
 		} catch (DataIntegrityViolationException e) {
@@ -39,9 +46,9 @@ public class UserAccountService {
 	 */
 	public UserAccount retrieveById(UUID id) {
 		Optional<UserAccount> findById = userRepository.findById(id);
-		
+
 		if (findById.isEmpty()) {
-			throw new NoSuchElementException("User entity " + id + " not found.");
+			throw new EntityNotFoundException("User entity " + id + " not found.");
 		}
 		return findById.get();
 	}

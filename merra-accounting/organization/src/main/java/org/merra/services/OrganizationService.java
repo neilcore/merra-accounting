@@ -18,7 +18,6 @@ import org.merra.services.phone.PhoneService;
 import org.merra.utilities.InvoiceConstants;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -29,7 +28,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class OrganizationService {
 	private final OrganizationRepository organizationRepository;
 	private final OrganizationSettingsRepository organizationSettingsRepo;
@@ -39,6 +37,26 @@ public class OrganizationService {
 	private final CountryService countryService;
 	private final PhoneService phoneService;
 	private final OrganizationMapper organizationMapper;
+
+	public OrganizationService(
+			OrganizationRepository organizationRepository,
+			OrganizationSettingsRepository organizationSettingsRepo,
+			OrganizationTypeRepository organizationTypeRepository,
+			AccountService accountService,
+			OrganizationMemberService organizationMemberService,
+			CountryService countryService,
+			PhoneService phoneService,
+			OrganizationMapper organizationMapper
+	) {
+		this.organizationRepository = organizationRepository;
+		this.organizationSettingsRepo = organizationSettingsRepo;
+		this.organizationTypeRepository = organizationTypeRepository;
+		this.accountService = accountService;
+		this.organizationMemberService = organizationMemberService;
+		this.countryService = countryService;
+		this.phoneService = phoneService;
+		this.organizationMapper = organizationMapper;
+	}
 	
 	
 	/**

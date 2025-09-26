@@ -24,20 +24,12 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * field @name is the only non optional attribute in this entity.
  */
 @Entity(name = "Contact")
 @Table(name = "contacts", schema = "merra_schema")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Contact {
 
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -82,7 +74,6 @@ public class Contact {
 	private String taxNumber;
 	
 	@Column(name = "contact_status", nullable = false)
-	@Builder.Default
 	private String contactStatus = "ACTIVE";
 	
 	@Column(name = "is_supplier", nullable = false)
@@ -108,6 +99,10 @@ public class Contact {
 	@Column(name = "updated_date_utc")
 	@TimeZoneStorage(TimeZoneStorageType.NORMALIZE_UTC)
 	private Instant updatedDateUTC;
+
+	public Contact() {
+		// default constructor
+	}
 	
 	public Contact(@NotBlank String name, @NotNull Organization organization) {
 		this.name = name;
@@ -121,4 +116,130 @@ public class Contact {
 	public void setIsCustomer(Boolean cus) {
 		this.isCustomer = cus ? Boolean.TRUE : Boolean.FALSE;
 	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
+	}
+
+	public LinkedHashSet<PhoneDetails> getPhoneNo() {
+		return phoneNo;
+	}
+
+	public void setPhoneNo(LinkedHashSet<PhoneDetails> phoneNo) {
+		this.phoneNo = phoneNo;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public String getCompanyNumber() {
+		return companyNumber;
+	}
+
+	public void setCompanyNumber(String companyNumber) {
+		this.companyNumber = companyNumber;
+	}
+
+	public Integer getDefaultDiscount() {
+		return defaultDiscount;
+	}
+
+	public void setDefaultDiscount(Integer defaultDiscount) {
+		this.defaultDiscount = defaultDiscount;
+	}
+
+	public String getTaxNumber() {
+		return taxNumber;
+	}
+
+	public void setTaxNumber(String taxNumber) {
+		this.taxNumber = taxNumber;
+	}
+
+	public String getContactStatus() {
+		return contactStatus;
+	}
+
+	public void setContactStatus(String contactStatus) {
+		this.contactStatus = contactStatus;
+	}
+
+	public Boolean getIsSupplier() {
+		return isSupplier;
+	}
+
+	public Boolean getIsCustomer() {
+		return isCustomer;
+	}
+
+	public Map<String, Object> getAddress() {
+		return address;
+	}
+
+	public void setAddress(Map<String, Object> address) {
+		this.address = address;
+	}
+
+	public PaymentTerms getPaymentTerms() {
+		return paymentTerms;
+	}
+
+	public void setPaymentTerms(PaymentTerms paymentTerms) {
+		this.paymentTerms = paymentTerms;
+	}
+
+	public Instant getUpdatedDateUTC() {
+		return updatedDateUTC;
+	}
+
+	public void setUpdatedDateUTC(Instant updatedDateUTC) {
+		this.updatedDateUTC = updatedDateUTC;
+	}
+
+	
 }

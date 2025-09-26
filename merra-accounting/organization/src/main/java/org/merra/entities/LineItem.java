@@ -20,10 +20,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  *  the "LineItems" collection holds all the granular detail
@@ -33,10 +29,6 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "line_item", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
 public class LineItem {
 
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -106,4 +98,138 @@ public class LineItem {
 		}
 		return response;
 	}
+
+	public LineItem() {
+	}
+
+	public LineItem(UUID id, @NotNull(message = "Invoice cannot be null") Invoice invoice,
+			@NotBlank(message = "Description cannot be blank") String description,
+			@NotBlank(message = "Line item ID cannot be blank") String lineItemId,
+			@NotNull(message = "Quantity cannot be blank") Double quantity,
+			@NotNull(message = "Unit amount cannot be blank") Double unitAmount,
+			@NotBlank(message = "Account code cannot be blank") String accountCode,
+			@NotNull(message = "Line amount cannot be blank") Double lineAmount,
+			@NotBlank(message = "taxType attribute cannot be blank.") String taxType,
+			@NotNull(message = "Tax amount cannot be null") BigDecimal taxAmount, Integer discountRate,
+			@NotNull(message = "total attribute cannot be null.") BigDecimal total) {
+		this(invoice, description, lineItemId, quantity, unitAmount, accountCode, lineAmount, taxType, taxAmount, discountRate, total);
+		this.id = id;
+	}
+
+	public LineItem(@NotNull(message = "Invoice cannot be null") Invoice invoice,
+			@NotBlank(message = "Description cannot be blank") String description,
+			@NotBlank(message = "Line item ID cannot be blank") String lineItemId,
+			@NotNull(message = "Quantity cannot be blank") Double quantity,
+			@NotNull(message = "Unit amount cannot be blank") Double unitAmount,
+			@NotBlank(message = "Account code cannot be blank") String accountCode,
+			@NotNull(message = "Line amount cannot be blank") Double lineAmount,
+			@NotBlank(message = "taxType attribute cannot be blank.") String taxType,
+			@NotNull(message = "Tax amount cannot be null") BigDecimal taxAmount, Integer discountRate,
+			@NotNull(message = "total attribute cannot be null.") BigDecimal total) {
+		this.invoice = invoice;
+		this.description = description;
+		this.lineItemId = lineItemId;
+		this.quantity = quantity;
+		this.unitAmount = unitAmount;
+		this.accountCode = accountCode;
+		this.lineAmount = lineAmount;
+		this.taxType = taxType;
+		this.taxAmount = taxAmount;
+		this.discountRate = discountRate;
+		this.total = total;
+	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public Invoice getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getLineItemId() {
+		return lineItemId;
+	}
+
+	public void setLineItemId(String lineItemId) {
+		this.lineItemId = lineItemId;
+	}
+
+	public Double getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Double quantity) {
+		this.quantity = quantity;
+	}
+
+	public Double getUnitAmount() {
+		return unitAmount;
+	}
+
+	public void setUnitAmount(Double unitAmount) {
+		this.unitAmount = unitAmount;
+	}
+
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+	}
+
+	public Double getLineAmount() {
+		return lineAmount;
+	}
+
+	public void setLineAmount(Double lineAmount) {
+		this.lineAmount = lineAmount;
+	}
+
+	public String getTaxType() {
+		return taxType;
+	}
+
+	public void setTaxType(String taxType) {
+		this.taxType = taxType;
+	}
+
+	public BigDecimal getTaxAmount() {
+		return taxAmount;
+	}
+
+	public void setTaxAmount(BigDecimal taxAmount) {
+		this.taxAmount = taxAmount;
+	}
+
+	public Integer getDiscountRate() {
+		return discountRate;
+	}
+
+	public void setDiscountRate(Integer discountRate) {
+		this.discountRate = discountRate;
+	}
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+
+	
 }

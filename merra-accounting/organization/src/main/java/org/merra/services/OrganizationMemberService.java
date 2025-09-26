@@ -12,23 +12,26 @@ import org.merra.entities.embedded.OrganizationUsers;
 import org.merra.enums.Roles;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class OrganizationMemberService {
 	private final UserAccountService userAccountService;
+
+	public OrganizationMemberService(
+			UserAccountService userAccountService
+	) {
+		this.userAccountService = userAccountService;
+	}
 	
 	/**
 	 * This method will set the organization's advisor.
 	 * @return - return {@linkplain OrganizationUsers} object type
 	 */
 	public OrganizationUsers addOrganizationAdvisor() {
-		return OrganizationUsers
-				.builder()
-				.userId(userAccountService.getAuthenticatedUser())
-				.userRole(Roles.ADVISOR.toString())
-				.build();
+		OrganizationUsers organizationUsers = new OrganizationUsers();
+		organizationUsers.setUserId(userAccountService.getAuthenticatedUser());
+		organizationUsers.setUserRole(Roles.ADVISOR.toString());
+
+		return organizationUsers;
 	}
 	
 	/**
@@ -61,18 +64,15 @@ public class OrganizationMemberService {
     		 * add the invited user to organization's @OrganizationUserInvites
     		 */
     		if (accountSettings.getAutoAcceptInvitation()) {
-    			OrganizationUsers newOrganizationUser = OrganizationUsers
-    					.builder()
-    					.userId(invitedUserAccount)
-    					.userRole(userAccountService.retrieveRole(user.role()))
-    					.build();
+    			OrganizationUsers newOrganizationUser = new OrganizationUsers();
+				newOrganizationUser.setUserId(invitedUserAccount);
+				newOrganizationUser.setUserRole(userAccountService.retrieveRole(user.role()));
     			organizationUsers.add(newOrganizationUser);
     		} else {
-    			OrganizationUserInvites addInvites = OrganizationUserInvites.builder()
-    					.invitationFor(invitedUserAccount)
-    					.invitationBy(authenticatedUser)
-    					.invitationRole(userAccountService.retrieveRole(user.role()))
-    					.build();
+    			OrganizationUserInvites addInvites = new OrganizationUserInvites();
+				addInvites.setInvitationFor(invitedUserAccount);
+				addInvites.setInvitationBy(authenticatedUser);
+				addInvites.setInvitationRole(userAccountService.retrieveRole(user.role()));
     			organizationUserInvites.add(addInvites);
     		}
     		

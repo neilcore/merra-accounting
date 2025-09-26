@@ -18,10 +18,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * This is a configuration settings for organization object.
@@ -29,10 +25,6 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "organization_setting", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class OrganizationSettings {
 
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -54,5 +46,52 @@ public class OrganizationSettings {
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(name = "line_item_settings")
 	private LineItemSettings lineItemSettings;
+
+	public OrganizationSettings() {
+	}
+
+	public OrganizationSettings(UUID settingId, Organization organization, InvoiceSettings invoiceSettings,
+			LineItemSettings lineItemSettings) {
+		this(organization, invoiceSettings, lineItemSettings);
+		this.settingId = settingId;
+	}
+
+	public OrganizationSettings(Organization organization, InvoiceSettings invoiceSettings,
+			LineItemSettings lineItemSettings) {
+		this.organization = organization;
+		this.invoiceSettings = invoiceSettings;
+		this.lineItemSettings = lineItemSettings;
+	}
+
+	public UUID getSettingId() {
+		return settingId;
+	}
+
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
+	}
+
+	public InvoiceSettings getInvoiceSettings() {
+		return invoiceSettings;
+	}
+
+	public void setInvoiceSettings(InvoiceSettings invoiceSettings) {
+		this.invoiceSettings = invoiceSettings;
+	}
+
+	public LineItemSettings getLineItemSettings() {
+		return lineItemSettings;
+	}
+
+	public void setLineItemSettings(LineItemSettings lineItemSettings) {
+		this.lineItemSettings = lineItemSettings;
+	}
+
+	
 }
 

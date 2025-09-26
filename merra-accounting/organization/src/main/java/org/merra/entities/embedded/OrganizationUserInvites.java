@@ -15,18 +15,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Embeddable
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class OrganizationUserInvites {
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -45,10 +35,64 @@ public class OrganizationUserInvites {
 	
 	@Column(name = "invite_date", nullable = false)
 	@DateTimeFormat(iso = ISO.DATE)
-	@Builder.Default
 	private LocalDate inviteDate = LocalDate.now();
 	
 	@Column(name = "invitation_status", nullable = false)
-	@Builder.Default
 	private String invitationStatus = OrganizationConstants.INVITATION_STATUS_PENDING;
+
+	public OrganizationUserInvites() {
+	}
+
+	public OrganizationUserInvites(@NotNull(message = "InvitationFor field cannot be null.") UserAccount invitationFor,
+			@NotNull(message = "InvitationBy field cannot be null.") UserAccount invitationBy,
+			@NotBlank(message = "invitationRole field cannot be null") String invitationRole, LocalDate inviteDate,
+			String invitationStatus) {
+		this.invitationFor = invitationFor;
+		this.invitationBy = invitationBy;
+		this.invitationRole = invitationRole;
+		this.inviteDate = inviteDate;
+		this.invitationStatus = invitationStatus;
+	}
+
+	public UserAccount getInvitationFor() {
+		return invitationFor;
+	}
+
+	public UserAccount getInvitationBy() {
+		return invitationBy;
+	}
+
+	public String getInvitationRole() {
+		return invitationRole;
+	}
+
+	public LocalDate getInviteDate() {
+		return inviteDate;
+	}
+
+	public String getInvitationStatus() {
+		return invitationStatus;
+	}
+
+	public void setInvitationFor(UserAccount invitationFor) {
+		this.invitationFor = invitationFor;
+	}
+
+	public void setInvitationBy(UserAccount invitationBy) {
+		this.invitationBy = invitationBy;
+	}
+
+	public void setInvitationRole(String invitationRole) {
+		this.invitationRole = invitationRole;
+	}
+
+	public void setInviteDate(LocalDate inviteDate) {
+		this.inviteDate = inviteDate;
+	}
+
+	public void setInvitationStatus(String invitationStatus) {
+		this.invitationStatus = invitationStatus;
+	}
+
+	
 }

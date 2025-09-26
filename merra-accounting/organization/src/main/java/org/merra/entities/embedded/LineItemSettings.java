@@ -3,16 +3,8 @@ package org.merra.entities.embedded;
 import java.io.Serializable;
 
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Embeddable
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class LineItemSettings implements Serializable {
 	/**
 	 * 
@@ -21,4 +13,32 @@ public class LineItemSettings implements Serializable {
 	private Double defaultQuantity;
 	private String defaultAccountCode;
 	private Integer defaultDiscountRate;
+
+	public Double getDefaultQuantity() {
+		return defaultQuantity;
+	}
+	public String getDefaultAccountCode() {
+		return defaultAccountCode;
+	}
+	public Integer getDefaultDiscountRate() {
+		return defaultDiscountRate;
+	}
+	public void setDefaultQuantity(Double defaultQuantity) {
+		this.defaultQuantity = defaultQuantity;
+	}
+	public void setDefaultAccountCode(String defaultAccountCode) {
+		this.defaultAccountCode = defaultAccountCode;
+	}
+	public void setDefaultDiscountRate(Integer defaultDiscountRate) {
+		this.defaultDiscountRate = defaultDiscountRate;
+	}
+	public LineItemSettings() {
+	}
+	public LineItemSettings(Double defaultQuantity, String defaultAccountCode, Integer defaultDiscountRate) {
+		this.defaultQuantity = defaultQuantity;
+		this.defaultAccountCode = defaultAccountCode;
+		this.defaultDiscountRate = defaultDiscountRate;
+	}
+
+	
 }

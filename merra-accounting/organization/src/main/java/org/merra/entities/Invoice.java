@@ -28,17 +28,9 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "invoice", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
 public class Invoice {
 
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -76,7 +68,6 @@ public class Invoice {
 	@NotNull(message = "Due date cannot be null")
 	private LocalDate dueDate;
 	
-	@Builder.Default
 	@NotBlank(message = "Status cannot be blank")
 	@Column(name = "invoice_status", nullable = false)
 	private String status = "DRAFT";
@@ -119,4 +110,177 @@ public class Invoice {
 			this.type = type.toUpperCase();
 		}
 	}
+
+
+	public Invoice() {
+	}
+
+	public Invoice(@NotNull(message = "organization attribute cannot be null.") Organization organization,
+			@NotNull(message = "Invoice type cannot be null") String type,
+			@NotNull(message = "contact attribute cannot be null.") Contact contact, Set<LineItem> lineItems,
+			String lineAmountTypes, @PastOrPresent(message = "Invalid value for date field.") LocalDate date,
+			@FutureOrPresent(message = "Due date must be today or in the future") @NotNull(message = "Due date cannot be null") LocalDate dueDate,
+			@NotBlank(message = "Status cannot be blank") String status,
+			@NotBlank(message = "Reference cannot be blank") String reference,
+			@NotNull(message = "subTotal cannot be null.") Double subTotal,
+			@NotNull(message = "grandTotal cannot be null.") BigDecimal grandTotal, BigDecimal totalTax,
+			@NotNull(message = "actions attribute cannot be null.") InvoiceActions actions) {
+		this.organization = organization;
+		this.type = type;
+		this.contact = contact;
+		this.lineItems = lineItems;
+		this.lineAmountTypes = lineAmountTypes;
+		this.date = date;
+		this.dueDate = dueDate;
+		this.status = status;
+		this.reference = reference;
+		this.subTotal = subTotal;
+		this.grandTotal = grandTotal;
+		this.totalTax = totalTax;
+		this.actions = actions;
+	}
+
+
+	public Invoice(UUID invoiceId,
+			@NotNull(message = "organization attribute cannot be null.") Organization organization,
+			@NotNull(message = "Invoice type cannot be null") String type,
+			@NotNull(message = "contact attribute cannot be null.") Contact contact, Set<LineItem> lineItems,
+			String lineAmountTypes, @PastOrPresent(message = "Invalid value for date field.") LocalDate date,
+			@FutureOrPresent(message = "Due date must be today or in the future") @NotNull(message = "Due date cannot be null") LocalDate dueDate,
+			@NotBlank(message = "Status cannot be blank") String status,
+			@NotBlank(message = "Reference cannot be blank") String reference,
+			@NotNull(message = "subTotal cannot be null.") Double subTotal,
+			@NotNull(message = "grandTotal cannot be null.") BigDecimal grandTotal, BigDecimal totalTax,
+			@NotNull(message = "actions attribute cannot be null.") InvoiceActions actions) {
+				
+		this(organization, type, contact, lineItems, lineAmountTypes, date, dueDate, status, reference, subTotal, grandTotal, totalTax, actions);
+		this.invoiceId = invoiceId;
+	}
+
+
+	public UUID getInvoiceId() {
+		return invoiceId;
+	}
+
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
+	}
+
+
+	public String getType() {
+		return type;
+	}
+
+
+	public Contact getContact() {
+		return contact;
+	}
+
+
+	public void setContact(Contact contact) {
+		this.contact = contact;
+	}
+
+
+	public Set<LineItem> getLineItems() {
+		return lineItems;
+	}
+
+
+	public void setLineItems(Set<LineItem> lineItems) {
+		this.lineItems = lineItems;
+	}
+
+
+	public String getLineAmountTypes() {
+		return lineAmountTypes;
+	}
+
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+
+	public LocalDate getDueDate() {
+		return dueDate;
+	}
+
+
+	public void setDueDate(LocalDate dueDate) {
+		this.dueDate = dueDate;
+	}
+
+
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
+	public String getReference() {
+		return reference;
+	}
+
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+
+	public Double getSubTotal() {
+		return subTotal;
+	}
+
+
+	public void setSubTotal(Double subTotal) {
+		this.subTotal = subTotal;
+	}
+
+
+	public BigDecimal getGrandTotal() {
+		return grandTotal;
+	}
+
+
+	public void setGrandTotal(BigDecimal grandTotal) {
+		this.grandTotal = grandTotal;
+	}
+
+
+	public BigDecimal getTotalTax() {
+		return totalTax;
+	}
+
+
+	public void setTotalTax(BigDecimal totalTax) {
+		this.totalTax = totalTax;
+	}
+
+
+	public InvoiceActions getActions() {
+		return actions;
+	}
+
+
+	public void setActions(InvoiceActions actions) {
+		this.actions = actions;
+	}
+
+	
 }

@@ -15,13 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("api/v1/business/organization/")
-@RequiredArgsConstructor
 public class InvoiceController {
 	private final InvoiceService invoicesService;
+
+	public InvoiceController(InvoiceService invoicesService) {
+		this.invoicesService = invoicesService;
+	}
 	
 	/**
 	 * When the user creates an invoice (e.g. clicks the button for creating

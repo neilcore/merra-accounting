@@ -21,17 +21,23 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
-@RequiredArgsConstructor
 public class SecurityConfig {
 	
 	private final AuthEntrypointJwt unathorizedHandler;
 	private final AuthTokenFilter authTokenFilter;
 	private final CustomUserDetailsService customUserDetailsService;
+
+    public SecurityConfig(
+            AuthEntrypointJwt unathorizedHandler, 
+            AuthTokenFilter authTokenFilter,
+            CustomUserDetailsService customUserDetailsService) {
+        this.unathorizedHandler = unathorizedHandler;
+        this.authTokenFilter = authTokenFilter;
+        this.customUserDetailsService = customUserDetailsService;
+    }
 	
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {

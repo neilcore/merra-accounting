@@ -15,12 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import jakarta.annotation.PostConstruct;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
-@Getter
 public class CountryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(CountryService.class);
@@ -33,6 +29,10 @@ public class CountryService {
 	private Set<String> twoLetterCountryCodes;
 	private Set<String> commonCountryNames;
 	private Set<String> countryCodes;
+
+	public CountryService(RestClient restClient) {
+		this.restClient = restClient;
+	}
 	
 	@PostConstruct
 	private void init() {

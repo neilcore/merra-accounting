@@ -9,17 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "organization_type", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class OrganizationType {
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
@@ -28,8 +20,24 @@ public class OrganizationType {
 	@Column(name = "name", nullable = false, unique = true)
 	private String name;
 	
+	public OrganizationType() {
+	}
 	public OrganizationType(String name) {
 		this.name = name;
 	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	
 
 }

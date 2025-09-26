@@ -23,17 +23,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "tax_rate", schema = "merra_schema")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class TaxRate {
 	
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -122,4 +114,124 @@ public class TaxRate {
 	public void setApplyToRevenueAccount(Boolean revenue) {
 		this.applyToRevenueAccount = revenue == null ? false : revenue;
 	}
+
+	public TaxRate() {
+	}
+
+	public TaxRate(Organization organization, @NotBlank(message = "name attribute cannot be null.") String name,
+			@NotBlank(message = "systemDefinedName attribute cannot be blank.") String systemDefinedName,
+			@NotBlank(message = "taxType attribute cannot be blank.") String taxType, Set<TaxComponent> taxComponent,
+			BigDecimal taxRateDisplay, BigDecimal effectiveRate,
+			@NotBlank(message = "status attribute cannot be null.") String status, Boolean applyToAssetAccount,
+			Boolean applyToEquityAccount, Boolean applyToExpensesAccount, Boolean applyToLiabilitiesAccount,
+			Boolean applyToRevenueAccount, CreatedDate createdDate) {
+		this.organization = organization;
+		this.name = name;
+		this.systemDefinedName = systemDefinedName;
+		this.taxType = taxType;
+		this.taxComponent = taxComponent;
+		this.taxRateDisplay = taxRateDisplay;
+		this.effectiveRate = effectiveRate;
+		this.status = status;
+		this.applyToAssetAccount = applyToAssetAccount;
+		this.applyToEquityAccount = applyToEquityAccount;
+		this.applyToExpensesAccount = applyToExpensesAccount;
+		this.applyToLiabilitiesAccount = applyToLiabilitiesAccount;
+		this.applyToRevenueAccount = applyToRevenueAccount;
+		this.createdDate = createdDate;
+	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSystemDefinedName() {
+		return systemDefinedName;
+	}
+
+	public void setSystemDefinedName(String systemDefinedName) {
+		this.systemDefinedName = systemDefinedName;
+	}
+
+	public String getTaxType() {
+		return taxType;
+	}
+
+	public void setTaxType(String taxType) {
+		this.taxType = taxType;
+	}
+
+	public Set<TaxComponent> getTaxComponent() {
+		return taxComponent;
+	}
+
+	public void setTaxComponent(Set<TaxComponent> taxComponent) {
+		this.taxComponent = taxComponent;
+	}
+
+	public BigDecimal getTaxRateDisplay() {
+		return taxRateDisplay;
+	}
+
+	public void setTaxRateDisplay(BigDecimal taxRateDisplay) {
+		this.taxRateDisplay = taxRateDisplay;
+	}
+
+	public BigDecimal getEffectiveRate() {
+		return effectiveRate;
+	}
+
+	public void setEffectiveRate(BigDecimal effectiveRate) {
+		this.effectiveRate = effectiveRate;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public Boolean getApplyToAssetAccount() {
+		return applyToAssetAccount;
+	}
+
+	public Boolean getApplyToEquityAccount() {
+		return applyToEquityAccount;
+	}
+
+	public Boolean getApplyToExpensesAccount() {
+		return applyToExpensesAccount;
+	}
+
+	public Boolean getApplyToLiabilitiesAccount() {
+		return applyToLiabilitiesAccount;
+	}
+
+	public Boolean getApplyToRevenueAccount() {
+		return applyToRevenueAccount;
+	}
+
+	public CreatedDate getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(CreatedDate createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	
 }

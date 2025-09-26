@@ -4,16 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Embeddable
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 public class TaxDetail implements Serializable {
 	/**
 	 * 
@@ -22,4 +14,31 @@ public class TaxDetail implements Serializable {
 	private BigDecimal taxAmount;
 	private String taxType;
 	private String taxName;
+	public TaxDetail() {
+	}
+	public TaxDetail(BigDecimal taxAmount, String taxType, String taxName) {
+		this.taxAmount = taxAmount;
+		this.taxType = taxType;
+		this.taxName = taxName;
+	}
+	public BigDecimal getTaxAmount() {
+		return taxAmount;
+	}
+	public String getTaxType() {
+		return taxType;
+	}
+	public String getTaxName() {
+		return taxName;
+	}
+	public void setTaxAmount(BigDecimal taxAmount) {
+		this.taxAmount = taxAmount;
+	}
+	public void setTaxType(String taxType) {
+		this.taxType = taxType;
+	}
+	public void setTaxName(String taxName) {
+		this.taxName = taxName;
+	}
+
+	
 }
