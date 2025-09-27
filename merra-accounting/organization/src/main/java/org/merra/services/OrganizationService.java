@@ -2,6 +2,7 @@ package org.merra.services;
 
 import org.merra.dto.CreateOrganizationRequest;
 import org.merra.dto.OrganizationDetailsResponse;
+import org.merra.dto.OrganziationSelectionResponse;
 import org.merra.embedded.DefaultCurrency;
 import org.merra.embedded.PhoneDetails;
 import org.merra.entities.Organization;
@@ -25,6 +26,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -225,5 +227,16 @@ public class OrganizationService {
 				.orElseThrow(() -> new EntityNotFoundException("Organization type not found"));
 		
 		return getOrganizationType;
+	}
+
+	/*
+	 * This method will retrieve the list of organizations that a user belongs to.
+	 * @param userId - accepts {@linkplain java.util.UUID} object type.
+	 * @return - returns a set of {@linkplain OrganziationSelectionResponse} object type.
+	 */
+	public Set<OrganziationSelectionResponse> getUserOrganizations(@NotNull UUID userId) {
+		Set<Organization> organizations = 
+			organizationRepository.findOrganizationsByUserId(userId);
+		return organizationMapper.toOrganizationSelectionResponses(organizations);
 	}
 }

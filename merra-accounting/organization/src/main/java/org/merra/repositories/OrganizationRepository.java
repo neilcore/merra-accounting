@@ -1,6 +1,8 @@
 package org.merra.repositories;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.merra.entities.Organization;
@@ -38,4 +40,10 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
      */
     @Query("SELECT org.country FROM Organization org WHERE org.id = :id")
     Optional<String> findCountryUsingOrganizationId(@Param("id") UUID id);
+
+	@Query("SELECT COUNT(org) > 0 FROM Organization org JOIN org.organizationUsers ou WHERE ou.userId.userId = :userId")
+	boolean existsOrganizationsByUserId(@Param("userId") UUID userId);
+
+	@Query("SELECT org FROM Organization org JOIN org.organizationUsers ou WHERE ou.userId.userId = :userId")
+	Set<Organization> findOrganizationsByUserId(@Param("userId") UUID userId);
 }

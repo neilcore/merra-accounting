@@ -60,9 +60,7 @@ public class Organization {
 	@CollectionTable(
 			schema = "merra_schema",
 			name = "organization_users",
-			joinColumns = {
-					@JoinColumn(name = "organization_id", referencedColumnName = "id", nullable = false)
-			})
+			joinColumns = {@JoinColumn(name = "organization_id", referencedColumnName = "id", nullable = false)})
 	private Set<OrganizationUsers> organizationUsers;
 	
 	@ElementCollection

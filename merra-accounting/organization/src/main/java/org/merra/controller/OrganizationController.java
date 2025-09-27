@@ -1,5 +1,6 @@
 package org.merra.controller;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.merra.api.ApiResponse;
@@ -7,6 +8,7 @@ import org.merra.dto.CreateOrganizationRequest;
 import org.merra.dto.OrganizationDetailsResponse;
 import org.merra.dto.OrganizationElementResponse;
 import org.merra.dto.OrganizationUserInvitationUpdateRequest;
+import org.merra.dto.OrganziationSelectionResponse;
 import org.merra.services.OrganizationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+
 
 /**
  * x-organization-id header is required for
@@ -40,6 +43,18 @@ public class OrganizationController {
 	public ResponseEntity<String> organizationTest() {
 		return ResponseEntity.ok("Okay...");
 	}
+
+	/*
+	 * This method controller will retrieve the list of organizations that a user belongs to.
+	 * @param userId - accepts {@linkplain java.util.UUID} object type.
+	 * @return - returns a set of {@linkplain OrganziationSelectionResponse} object type.
+	*/
+	@GetMapping("select/organizations/{userId}")
+	public ResponseEntity<Set<OrganziationSelectionResponse>> getOrganizationsByUserId(@PathVariable("userId") UUID userId) {
+		Set<OrganziationSelectionResponse> response = organizationService.getUserOrganizations(userId);
+		return ResponseEntity.ok(response);
+	}
+	
 	
 	@Operation(summary = "create new organization")
 	@PostMapping("create")

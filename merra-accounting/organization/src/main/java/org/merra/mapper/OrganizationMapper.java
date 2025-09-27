@@ -9,6 +9,7 @@ import org.mapstruct.Mappings;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueMappingStrategy;
 import org.merra.dto.OrganizationDetailsResponse;
+import org.merra.dto.OrganziationSelectionResponse;
 import org.merra.entities.Organization;
 import org.merra.entities.OrganizationType;
 import org.merra.entities.embedded.OrganizationUsers;
@@ -50,4 +51,8 @@ public interface OrganizationMapper {
 		
 		return mapUsers;
 	}
+
+	@Mapping(source = "id", target = "organizationId")
+	OrganziationSelectionResponse toOrganizationSelectionResponse(Organization org);
+	Set<OrganziationSelectionResponse> toOrganizationSelectionResponses(Set<Organization> org);
 }

@@ -2,6 +2,8 @@ package org.merra.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -61,6 +63,9 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
     
+    /*
+     * This bean is used for method level security expressions.
+    */
     @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
         return new SecurityEvaluationContextExtension();
@@ -74,11 +79,11 @@ public class SecurityConfig {
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
 			@Override
-			public void addCorsMappings(CorsRegistry registry) {
+			public void addCorsMappings(@NonNull CorsRegistry registry) {
 				registry.addMapping("/**")
-				.allowedOrigins("http://localhost:4200/")
+				.allowedOrigins("http://localhost:4200")
+                .allowedHeaders("*")
 				.allowedMethods("*")
-				.allowedHeaders("*")
 				.allowCredentials(true);
 			}
 		};
@@ -93,31 +98,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
-        		.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                request ->
-                        request
-                                .requestMatchers(
-                                		"/", "/api/auth/**",
-                                		"/swagger-ui/**","/api-docs/**","/v3/api-docs/**"
-                                )
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
-
-        ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unathorizedHandler))
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(request -> request
+            /*
+             * Allows all HTTP OPTIONS requests to any path without authentication.
+             * This is important for CORS preflight requests, which browsers send before actual API calls.
+            */
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers(
+                "/", "/api/auth/**",
+                "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**"
+            ).permitAll()
+            .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unathorizedHandler))
+            // .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-    
-//    @Bean
-//    public SecurityFilterChain oauth2LoginFilterChain(HttpSecurity http) throws Exception {
-//    	http
-//    		.oauth2Login(null);
-//    	
-//    	return http.build();
-//    }
 }
