@@ -12,6 +12,7 @@ public record OrganziationSelectionResponse(
     String displayName,
     @NotBlank(message = "legalName cannot be blank")
     String legalName,
+    String description,
     @NotBlank(message = "status cannot be blank")
     String status
 ) {

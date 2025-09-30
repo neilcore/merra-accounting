@@ -65,11 +65,11 @@ public class AccountService {
 	public void createDefaultAccounts(@NotNull Organization org) {
 		
 		// Account categories
-		AccountCategory ASSET_CAT = accountCategoryRepository.findById(AccountCategoryRepository.assetId).get();
-		AccountCategory LIABILITY_CAT = accountCategoryRepository.findById(AccountCategoryRepository.liabilityId).get();
-		AccountCategory REVENUE_CAT = accountCategoryRepository.findById(AccountCategoryRepository.revenueId).get();
-		AccountCategory EQUITY_CAT = accountCategoryRepository.findById(AccountCategoryRepository.equityId).get();
-		AccountCategory EXPENSE_CAT = accountCategoryRepository.findById(AccountCategoryRepository.expenseId).get();
+		AccountCategory ASSET_CAT = accountCategoryRepository.findByNameIgnoreCase(AccountConstants.ACC_CATEGORY_ASSET).get();
+		AccountCategory LIABILITY_CAT = accountCategoryRepository.findByNameIgnoreCase(AccountConstants.ACC_CATEGORY_LIABILITY).get();
+		AccountCategory REVENUE_CAT = accountCategoryRepository.findByNameIgnoreCase(AccountConstants.ACC_CATEGORY_REVENUE).get();
+		AccountCategory EQUITY_CAT = accountCategoryRepository.findByNameIgnoreCase(AccountConstants.ACC_CATEGORY_EQUITY).get();
+		AccountCategory EXPENSE_CAT = accountCategoryRepository.findByNameIgnoreCase(AccountConstants.ACC_CATEGORY_EXPENSE).get();
 		
 		// Create asset accounts
 		// A debit balance account
@@ -77,7 +77,7 @@ public class AccountService {
 		Account accountReceivable = new Account(
 				org,
 				AccountConstants.ACC_CODE_ACC_RECEIVABLE,
-				"Account receivable",
+				AccountConstants.ACC_NAME_ACC_RECEIVABLE,
 				currentAsset,
 				ASSET_CAT
 		);
@@ -86,7 +86,7 @@ public class AccountService {
 		Account preparedExpense = new Account(
 				org,
 				AccountConstants.ACC_CODE_PREP_EXPENSES,
-				"Prepared Expenses",
+				AccountConstants.ACC_NAME_PREP_EXPENSES,
 				currentAsset,
 				ASSET_CAT
 		);
@@ -96,20 +96,14 @@ public class AccountService {
 		Account inventoryAssetAccount = new Account(
 				org,
 				AccountConstants.ACC_CODE_INVENTORY,
-				"Inventory",
+				AccountConstants.ACC_NAME_INVENTORY,
 				inventoryType,
 				ASSET_CAT
 		);
 		inventoryAssetAccount.setDescription("Account for businesses that hold and track stock.");
 		
 		AccountType fixedAssetType = accountTypeRepository.save(new AccountType("Fixed Assets", ""));
-		Account fixedAssetAccount = new Account(
-				org,
-				AccountConstants.ACC_CODE_FIXED_ASSET,
-				"Fixed Asset",
-				fixedAssetType,
-				ASSET_CAT
-		);
+		Account fixedAssetAccount = new Account(org, AccountConstants.ACC_CODE_FIXED_ASSET, "Fixed Asset", fixedAssetType, ASSET_CAT);
 		fixedAssetAccount.setDescription("Accounts for long-term assets.");
 		
 		accountRepository.saveAll(List.of(accountReceivable, preparedExpense, inventoryAssetAccount, fixedAssetAccount));
@@ -120,7 +114,7 @@ public class AccountService {
 		Account accountPayable = new Account(
 				org,
 				AccountConstants.ACC_CODE_ACC_PAYABLE,
-				"Payable Account",
+				AccountConstants.ACC_NAME_ACC_PAYABLE,
 				currentLiabilityType,
 				LIABILITY_CAT
 		);
@@ -130,7 +124,7 @@ public class AccountService {
 		Account loans = new Account(
 				org,
 				AccountConstants.ACC_CODE_LOANS_PAYABLE,
-				"Loans payable",
+				AccountConstants.ACC_NAME_LOANS_PAYABLE,
 				liabilityType,
 				LIABILITY_CAT
 		);
@@ -138,8 +132,8 @@ public class AccountService {
 		
 		Account taxPayable = new Account(
 				org,
-				"Tax payable",
 				AccountConstants.ACC_CODE_TAX_PAYABLE,
+				AccountConstants.ACC_NAME_TAX_PAYABLE,
 				currentLiabilityType,
 				LIABILITY_CAT
 				);
@@ -152,7 +146,7 @@ public class AccountService {
 		Account annualEarning = new Account(
 				org,
 				AccountConstants.ACC_CODE_RETAINED_EARNING,
-				"Retained Earnings",
+				AccountConstants.ACC_NAME_RETAINED_EARNING,
 				equityType,
 				EQUITY_CAT
 		);
@@ -162,7 +156,7 @@ public class AccountService {
 		Account ownersDrawing = new Account(
 				org,
 				AccountConstants.ACC_CODE_OWNER_DRAWING,
-				"Owner withdrawal",
+				AccountConstants.ACC_NAME_OWNER_DRAWING,
 				equityType,
 				EQUITY_CAT
 		);
@@ -171,7 +165,7 @@ public class AccountService {
 		Account ownerCapital = new Account(
 				org,
 				AccountConstants.ACC_CODE_OWNER_CAPITAL,
-				"Owner capital",
+				AccountConstants.ACC_NAME_OWNER_CAPITAL,
 				equityType,
 				EQUITY_CAT
 		);
@@ -184,7 +178,7 @@ public class AccountService {
 		Account salesRevenueAcc = new Account(
 				org,
 				AccountConstants.ACC_CODE_SALES_REVENUE,
-				"Sales revenue",
+				AccountConstants.ACC_NAME_SALES_REVENUE,
 				revenueType,
 				REVENUE_CAT
 		);
@@ -193,7 +187,7 @@ public class AccountService {
 		Account serviceIncomeAcc = new Account(
 				org,
 				AccountConstants.ACC_CODE_SERVICE_INCOME,
-				"Service Income",
+				AccountConstants.ACC_NAME_SERVICE_INCOME,
 				revenueType,
 				REVENUE_CAT
 		);
@@ -206,7 +200,7 @@ public class AccountService {
 		Account officeExpenses = new Account(
 				org,
 				AccountConstants.ACC_CODE_OFFICE_EXPENSES,
-				"Office Expenses",
+				AccountConstants.ACC_NAME_OFFICE_EXPENSES,
 				expenseType,
 				EXPENSE_CAT
 		);
@@ -215,7 +209,7 @@ public class AccountService {
 		Account advertisingExpenses = new Account(
 				org,
 				AccountConstants.ACC_CODE_MARKETING_EXPENSES,
-				"Marketing Expense",
+				AccountConstants.ACC_NAME_MARKETING_EXPENSES,
 				expenseType,
 				EXPENSE_CAT
 		);
@@ -224,7 +218,7 @@ public class AccountService {
 		Account consultingAndAccountingExpenses = new Account(
 				org,
 				AccountConstants.ACC_CODE_CONSULTING_ACCOUNTING,
-				"Consulting & Accounting",
+				AccountConstants.ACC_NAME_CONSULTING_ACCOUNTING,
 				expenseType,
 				EXPENSE_CAT
 		);
@@ -234,7 +228,7 @@ public class AccountService {
 		Account costOfGoodsSold = new Account(
 				org,
 				AccountConstants.ACC_CODE_COST_GOODS_SOLD,
-				"Cost of Goods Sold",
+				AccountConstants.ACC_NAME_COST_GOODS_SOLD,
 				directCost,
 				EXPENSE_CAT
 		);
@@ -243,7 +237,7 @@ public class AccountService {
 		Account utilities = new Account(
 				org,
 				AccountConstants.ACC_CODE_UTILITIES,
-				"Utilities",
+				AccountConstants.ACC_NAME_UTILITIES,
 				expenseType,
 				EXPENSE_CAT
 		);
@@ -252,7 +246,7 @@ public class AccountService {
 		Account travelAndEntertainment = new Account(
 				org,
 				AccountConstants.ACC_CODE_TRAVEL_AND_ENTERTAINMENT,
-				"Travel & Entertainment",
+				AccountConstants.ACC_NAME_TRAVEL_AND_ENTERTAINMENT,
 				expenseType,
 				EXPENSE_CAT
 		);

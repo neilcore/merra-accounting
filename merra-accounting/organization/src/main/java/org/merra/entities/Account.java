@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import org.hibernate.annotations.SQLRestriction;
-import org.merra.repositories.AccountRepository;
 import org.merra.utilities.AccountConstants;
 
 import jakarta.persistence.CascadeType;

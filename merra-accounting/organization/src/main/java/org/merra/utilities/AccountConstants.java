@@ -11,6 +11,33 @@ public final class AccountConstants {
 	// Entry type
 	public static final String ACC_ENTRY_DEBIT = "DEBIT";
 	public static final String ACC_ENTRY_CREDIT = "CREDIT";
+
+	// Account names
+	public static final String ACC_NAME_ACC_RECEIVABLE = "Accounts Receivable";
+	public static final String ACC_NAME_PREP_EXPENSES = "Prepaid Expenses";
+	public static final String ACC_NAME_INVENTORY = "Inventory";
+	public static final String ACC_NAME_FIXED_ASSET = "Fixed Assets";
+	public static final String ACC_NAME_ACC_PAYABLE = "Accounts Payable";
+	public static final String ACC_NAME_LOANS_PAYABLE = "Loans Payable";
+	public static final String ACC_NAME_TAX_PAYABLE = "Tax Payable";
+	public static final String ACC_NAME_RETAINED_EARNING = "Retained Earnings";
+	public static final String ACC_NAME_OWNER_DRAWING = "Owner's Drawing";
+	public static final String ACC_NAME_OWNER_CAPITAL = "Owner's Capital";
+	public static final String ACC_NAME_SALES_REVENUE = "Sales Revenue";
+	public static final String ACC_NAME_SERVICE_INCOME = "Service Income";
+	public static final String ACC_NAME_OFFICE_EXPENSES = "Office Expenses";
+	public static final String ACC_NAME_MARKETING_EXPENSES = "Marketing Expenses";
+	public static final String ACC_NAME_CONSULTING_ACCOUNTING = "Consulting and Accounting";
+	public static final String ACC_NAME_COST_GOODS_SOLD = "Cost of Goods Sold";
+	public static final String ACC_NAME_UTILITIES = "Utilities";
+	public static final String ACC_NAME_TRAVEL_AND_ENTERTAINMENT = "Travel and Entertainment";
+
+	// Account categories
+	public static final String ACC_CATEGORY_ASSET = "ASSET";
+	public static final String ACC_CATEGORY_EQUITY = "EQUITY";
+	public static final String ACC_CATEGORY_EXPENSE = "EXPENSE";
+	public static final String ACC_CATEGORY_LIABILITY = "LIABILITY";
+	public static final String ACC_CATEGORY_REVENUE = "REVENUE";
 	
 	// Account class types
 	public static final String ACC__CLASS_TYPE_ASSET = "ASSET";

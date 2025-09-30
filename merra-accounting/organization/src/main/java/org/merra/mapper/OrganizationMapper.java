@@ -52,7 +52,10 @@ public interface OrganizationMapper {
 		return mapUsers;
 	}
 
-	@Mapping(source = "id", target = "organizationId")
+	@Mappings({
+		@Mapping(source = "id", target = "organizationId"),
+		@Mapping(source="organizationDescription", target="description")
+	})
 	OrganziationSelectionResponse toOrganizationSelectionResponse(Organization org);
 	Set<OrganziationSelectionResponse> toOrganizationSelectionResponses(Set<Organization> org);
 }

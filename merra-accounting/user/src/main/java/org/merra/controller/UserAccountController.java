@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -46,7 +45,7 @@ public class UserAccountController {
 
 	
 	@GetMapping("{userId}")
-	public ResponseEntity<ApiResponse> getUserDetail(@RequestParam UUID userId) {
+	public ResponseEntity<ApiResponse> getUserDetail(@PathVariable("userId") UUID userId) {
 		UserAccount userDetail = userAccountService.retrieveById(userId);
 		ApiResponse response = new ApiResponse(
 				"User detail retrieved successfully.",
