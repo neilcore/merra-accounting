@@ -28,11 +28,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
-            return;
+            return; // Exit early
         }
         
         final String jwt = authHeader.substring(7);

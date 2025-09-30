@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,14 +29,17 @@ public class SecurityConfig {
 	
 	private final AuthEntrypointJwt unathorizedHandler;
 	private final AuthTokenFilter authTokenFilter;
+    private final HeaderFilter headerFilter;
 	private final CustomUserDetailsService customUserDetailsService;
 
     public SecurityConfig(
             AuthEntrypointJwt unathorizedHandler, 
             AuthTokenFilter authTokenFilter,
+            HeaderFilter headerFilter,
             CustomUserDetailsService customUserDetailsService) {
         this.unathorizedHandler = unathorizedHandler;
         this.authTokenFilter = authTokenFilter;
+        this.headerFilter = headerFilter;
         this.customUserDetailsService = customUserDetailsService;
     }
 	
@@ -105,17 +107,15 @@ public class SecurityConfig {
              * This is important for CORS preflight requests, which browsers send before actual API calls.
             */
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers(
-                "/", "/api/auth/**",
-                "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**"
-            ).permitAll()
+            .requestMatchers("/", "/api/auth/**", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
             .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unathorizedHandler))
             // .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
             .authenticationProvider(authenticationProvider())
-            .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(headerFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
