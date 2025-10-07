@@ -4,13 +4,13 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.merra.dto.UserDetailResponse;
 import org.merra.entities.UserAccount;
 import org.merra.entities.UserAccountSettings;
 import org.merra.enums.Roles;
 import org.merra.repositories.UserAccountRepository;
 import org.merra.repositories.UserAccountSettingsRepository;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -22,15 +22,14 @@ public class UserAccountService {
 
 	public UserAccountService(
 			UserAccountRepository userRepository,
-			UserAccountSettingsRepository accountSettingsRepository
-	) {
+			UserAccountSettingsRepository accountSettingsRepository) {
 		this.userRepository = userRepository;
 		this.accountSettingsRepository = accountSettingsRepository;
 	}
-	
+
 	// TODO - createUserAccountSetting() must test this method
 	public void createUserAccountSetting(UserAccount account) {
-        UserAccountSettings accountSettings = new UserAccountSettings(account);
+		UserAccountSettings accountSettings = new UserAccountSettings(account);
 
 		try {
 			accountSettingsRepository.save(accountSettings);
@@ -38,10 +37,11 @@ public class UserAccountService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * This method will retrieve UserAccount entity by ID.
-	 * @param id  - accepts {@linkplain java.util.UUID} type 
+	 * 
+	 * @param id - accepts {@linkplain java.util.UUID} type
 	 * @return - {@linkplain UserAccount} object type.
 	 */
 	public UserAccount retrieveById(UUID id) {
@@ -52,23 +52,24 @@ public class UserAccountService {
 		}
 		return findById.get();
 	}
-	
+
 	/**
 	 * This will retrieve current authenticated user entity
+	 * 
 	 * @return {@linkplain UserAccount} object
 	 * @exception - throw {@linkplain java.util.NoSuchElementException}
-	 * if it can't find one.
+	 *              if it can't find one.
 	 */
 	public UserAccount getAuthenticatedUser() {
 		Optional<UserAccount> findAuthUser = userRepository.findAuthenticatedUser();
-		
+
 		if (findAuthUser.isEmpty()) {
 			throw new NoSuchElementException("Authenticated user not found in the database.");
 		}
-		
+
 		return findAuthUser.get();
 	}
-    
+
 	public String retrieveRole(String role) {
 		if (role == Roles.SUBSCRIBER.toString()) {
 			return Roles.SUBSCRIBER.toString();
@@ -79,5 +80,13 @@ public class UserAccountService {
 		} else {
 			return "n/a";
 		}
+	}
+
+	public void enableUserAccount(@NonNull UUID userId) {
+		UserAccount getUserAccount = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("User entity " + userId + " not found."));
+
+		getUserAccount.setIsEnabled(true);
+		userRepository.save(getUserAccount);
 	}
 }

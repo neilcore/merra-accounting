@@ -65,14 +65,6 @@ public class UserAccount implements UserDetails {
 	@NotBlank(message = "country attribute cannot be blank.")
 	private String country;
 
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
 	// A user by default isn't part of any organization
 	@Column(name = "part_of_organization", nullable = false)
 	private boolean partOfOrganization = false;
@@ -80,9 +72,40 @@ public class UserAccount implements UserDetails {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userAccount")
 	private UserAccountSettings accountSettings;
 
+	@Column(nullable = false, name = "is_enabled")
+	private boolean isEnabled = false; // Default to enabled when account is created
+
+	@Column(name = "verification_token")
+	private String verificationToken;
+
+	public String getVerificationToken() {
+		return verificationToken;
+	}
+
+	public void setVerificationToken(String verificationToken) {
+		this.verificationToken = verificationToken;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return this.isEnabled; // Use your entity field
+	}
+
+	public void setIsEnabled(boolean en) {
+		this.isEnabled = en;
+	}
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return List.of(new SimpleGrantedAuthority(roles));
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 	@Override

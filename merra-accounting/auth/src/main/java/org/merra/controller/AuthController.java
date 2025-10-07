@@ -15,6 +15,7 @@ import org.merra.dto.TokenRequest;
 import org.merra.entities.UserAccount;
 import org.merra.enums.Roles;
 import org.merra.repositories.UserAccountRepository;
+import org.merra.service.AuthService;
 import org.merra.services.UserAccountService;
 import org.merra.utils.AuthConstantResponses;
 import org.springframework.http.HttpStatus;
@@ -38,131 +39,53 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("api/auth/")
 public class AuthController {
-	private final UserDetailsService userDetailsService;
-	private final JwtUtils jwtUtils;
+    private final UserDetailsService userDetailsService;
+    private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserAccountRepository userRepository;
     private final UserAccountService userAccountService;
 
+    private final AuthService authService;
+
     public AuthController(
-    		UserDetailsService userDetailsService,
-    		JwtUtils jwtUtils,
+            AuthService authService,
+            UserDetailsService userDetailsService,
+            JwtUtils jwtUtils,
             AuthenticationManager authenticationManager,
             PasswordEncoder passwordEncoder,
             UserAccountRepository userRepository,
-            UserAccountService userAccountService
-    ) {
+            UserAccountService userAccountService) {
         this.userDetailsService = userDetailsService;
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.userAccountService = userAccountService;
+        this.authService = authService;
     }
-    
+
     /**
      * Generate new access & refresh token
-     * @param request TokenRequest oject type.
+     * 
+     * @param request TokenRequest object type.
      * @return
      */
     @PostMapping("tokens")
     public ResponseEntity<?> tokens(@Valid @RequestBody TokenRequest request) {
-    	UserDetails userDetails = userDetailsService.loadUserByUsername(request.userEmail());
-    	
-    	final boolean IS_TOKEN_VALID = jwtUtils.isTokenValid(request.refreshToken(), userDetails);
-        if (!IS_TOKEN_VALID) return new ResponseEntity<>(AuthConstantResponses.INVALID_REFRESH_TOKEN, HttpStatus.UNAUTHORIZED);
-        
-        final Map<String, String> jwtToken = jwtUtils.generateToken(userDetails);
-        JwtTokens tokens = new JwtTokens(
-        		jwtToken.get("accessToken"),
-        		jwtToken.get("refreshToken")
-        );
-        
+        JwtTokens tokens = authService.tokens(request);
         return new ResponseEntity<>(tokens, HttpStatus.OK);
     }
-    
-    @PostMapping("signin")
-    public ResponseEntity<?> signin(@Valid @RequestBody LoginRequest loginRequest) {
-        Authentication authentication;
-        try {
-            authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.email(),
-                            loginRequest.password()
-                    )
-            );
-        } catch (AuthenticationException e) {
-        	ApiError apiError = new ApiError(
-        			AuthConstantResponses.INVALID_CREDENTIALS,
-        			false,
-        			HttpStatus.BAD_REQUEST,
-        			List.of(e.getMessage())
-        	);
-            return ResponseEntity.badRequest().body(apiError);
-        }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserAccount getUser = userRepository
-        	.findUserByEmailIgnoreCase(loginRequest.email()).get();
-        
-        Map<String, String> jwtTokens = jwtUtils.generateToken(getUser);
-        List<String> roles = getUser.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
-        AuthResponse authResponse = new AuthResponse(
-        		new JwtTokens(jwtTokens.get("accessToken"), jwtTokens.get("refreshToken")),
-        		new AuthResponse.UserDetail(getUser.getUserId(), getUser.getEmail()),
-        		roles
-        );
-        
-        ApiResponse res = new ApiResponse(
-        		AuthConstantResponses.LOGIN_SUCCESSFUL,
-        		true,
-        		HttpStatus.OK,
-        		authResponse
-        );
+    @PostMapping("signin")
+    public ResponseEntity<AuthResponse> signin(@Valid @RequestBody LoginRequest loginRequest) {
+        AuthResponse res = authService.login(loginRequest);
         return ResponseEntity.ok(res);
     }
 
     @PostMapping("signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest signupRequest) {
-        Optional<UserAccount> findUserEmail = userRepository.findUserByEmailIgnoreCase(signupRequest.email());
-
-        if (findUserEmail.isPresent()) {
-            ApiError apiError = new ApiError(
-            		AuthConstantResponses.SIGNUP_FAILED,
-            		false,
-            		HttpStatus.CONFLICT,
-            		AuthConstantResponses.EMAIL_EXISTS
-            );
-            return ResponseEntity.badRequest().body(apiError);
-        }
-        
-        UserAccount userBuilder = new UserAccount();
-        userBuilder.setFirstName(signupRequest.firstName());
-        userBuilder.setLastName(signupRequest.lastName());
-        userBuilder.setEmail(signupRequest.email());
-        userBuilder.setAccountPassword(passwordEncoder.encode(signupRequest.password()));
-        userBuilder.setRoles(Roles.NONE.toString()); // By default user account don't have a
-
-        UserAccount newUser = userRepository.save(userBuilder);
-        
-        /**
-         * Once the new user is created,
-         * create it's account settings
-         */
-        userAccountService.createUserAccountSetting(newUser);
-        
-        Map<String, String> jwtToken = jwtUtils.generateToken(newUser);
-        List<String> roles = newUser.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
-        AuthResponse authResponse = new AuthResponse(
-        		new JwtTokens(jwtToken.get("accessToken"), jwtToken.get("refreshToken")),
-        		new AuthResponse.UserDetail(newUser.getUserId(), newUser.getEmail()),
-        		roles
-        );
+        AuthResponse authResponse = authService.signup(signupRequest);
 
         ApiResponse response = new ApiResponse();
         response.setMessage(AuthConstantResponses.ACCOUNT_CREATED);
