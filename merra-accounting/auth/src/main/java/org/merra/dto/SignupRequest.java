@@ -1,22 +1,12 @@
 package org.merra.dto;
+
+import jakarta.validation.constraints.NotBlank;
+
 public record SignupRequest(
-		String email,
-		String firstName,
-		String lastName,
-		String password
-) {
-		public SignupRequest {
-		if (email == null || email.isBlank()) {
-			throw new IllegalArgumentException("Email cannot be null or blank");
-		}
-		if (firstName == null || firstName.isBlank()) {
-			throw new IllegalArgumentException("First name cannot be null or blank");
-		}
-		if (lastName == null || lastName.isBlank()) {
-			throw new IllegalArgumentException("Last name cannot be null or blank");
-		}
-		if (password == null || password.isBlank()) {
-			throw new IllegalArgumentException("Password cannot be null or blank");
-		}
-	}
+		@NotBlank(message = "email component cannot be blank.") String email,
+		String contactNumber,
+		@NotBlank(message = "country component cannot be blank.") String country,
+		@NotBlank(message = "firstName component cannot be blank.") String firstName,
+		@NotBlank(message = "lastName component cannot be blank.") String lastName,
+		@NotBlank(message = "password component cannot be blank.") String password) {
 }

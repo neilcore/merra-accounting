@@ -15,7 +15,6 @@ import org.merra.mapper.AccountMapper;
 import org.merra.repositories.AccountCategoryRepository;
 import org.merra.repositories.AccountRepository;
 import org.merra.repositories.AccountTypeRepository;
-import org.merra.repositories.InvoiceRepository;
 import org.merra.utilities.AccountConstants;
 import org.springframework.stereotype.Service;
 
@@ -29,20 +28,17 @@ public class AccountService {
 	private final AccountCategoryRepository accountCategoryRepository;
 	private final AccountRepository accountRepository;
 	private final AccountTypeRepository accountTypeRepository;
-	private final InvoiceRepository invoiceRepository;
 
 	public AccountService(
 			AccountMapper accountMapper,
 			AccountCategoryRepository accountCategoryRepository,
 			AccountRepository accountRepository,
-			AccountTypeRepository accountTypeRepository,
-			InvoiceRepository invoiceRepository
+			AccountTypeRepository accountTypeRepository
 	) {
 		this.accountMapper = accountMapper;
 		this.accountCategoryRepository = accountCategoryRepository;
 		this.accountRepository = accountRepository;
 		this.accountTypeRepository = accountTypeRepository;
-		this.invoiceRepository = invoiceRepository;
 	}
 	
 	public AccountResponse createAccount() {

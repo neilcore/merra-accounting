@@ -25,47 +25,60 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "user_account", schema="merra_schema")
+@Table(name = "user_account", schema = "merra_schema")
 public class UserAccount implements UserDetails {
-	
-	@Id @GeneratedValue(strategy = GenerationType.UUID)
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "user_id", nullable = false, unique = true)
 	private UUID userId;
-	
+
 	@Column(nullable = false, unique = true, name = "email")
 	@Email(message = "Email should be valid")
 	private String email;
-	
+
 	@Column(name = "first_name", nullable = false)
 	@NotBlank(message = "First name is mandatory")
 	private String firstName;
-	
+
 	@Column(name = "last_name", nullable = false)
 	@NotBlank(message = "Last name is mandatory")
 	private String lastName;
-	
+
 	@Column(name = "account_password", nullable = false)
 	@NotNull(message = "accountPassword cannot be null.")
 	private String accountPassword;
-	
+
 	@Column(name = "contact_number", columnDefinition = "jsonb")
 	@JdbcTypeCode(SqlTypes.JSON)
 	private Map<String, String> contactNumber;
-	
-    @Column(name = "account_role", nullable = false)
-    @NotNull(message = "Roles cannot be null")
-    private String roles = "NONE";
-    
-    // A user by default doesn't own any organization
-    @Column(name = "is_owner", nullable = false)
-    private boolean isOwner = false;
-    
-    // A user by default isn't part of any organization
-    @Column(name = "part_of_organization", nullable = false)
-    private boolean partOfOrganization = false;
-    
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userAccount")
-    private UserAccountSettings accountSettings;
+
+	@Column(name = "account_role", nullable = false)
+	@NotNull(message = "Roles cannot be null")
+	private String roles = "NONE";
+
+	// A user by default doesn't own any organization
+	@Column(name = "is_owner", nullable = false)
+	private boolean isOwner = false;
+
+	@Column(nullable = false)
+	@NotBlank(message = "country attribute cannot be blank.")
+	private String country;
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	// A user by default isn't part of any organization
+	@Column(name = "part_of_organization", nullable = false)
+	private boolean partOfOrganization = false;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userAccount")
+	private UserAccountSettings accountSettings;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -76,11 +89,11 @@ public class UserAccount implements UserDetails {
 	public String getUsername() {
 		return this.email;
 	}
-	
-    @Override
-    public String getPassword() {
-        return this.accountPassword;
-    }
+
+	@Override
+	public String getPassword() {
+		return this.accountPassword;
+	}
 
 	public UserAccount() {
 	}
@@ -178,5 +191,4 @@ public class UserAccount implements UserDetails {
 		this.accountSettings = accountSettings;
 	}
 
-	
 }
