@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.merra.entities.embedded.UserTokens;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -75,15 +76,16 @@ public class UserAccount implements UserDetails {
 	@Column(nullable = false, name = "is_enabled")
 	private boolean isEnabled = false; // Default to enabled when account is created
 
-	@Column(name = "verification_token")
-	private String verificationToken;
+	@JdbcTypeCode(SqlTypes.JSON)
+	@Column(name = "tokens", columnDefinition = "jsonb")
+	private UserTokens tokens;
 
-	public String getVerificationToken() {
-		return verificationToken;
+	public UserTokens getTokens() {
+		return tokens;
 	}
 
-	public void setVerificationToken(String verificationToken) {
-		this.verificationToken = verificationToken;
+	public void setTokens(UserTokens tokens) {
+		this.tokens = tokens;
 	}
 
 	@Override
