@@ -2,12 +2,7 @@ package org.merra.entities;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import org.merra.entities.embedded.UserTokens;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,10 +45,6 @@ public class UserAccount implements UserDetails {
 	@NotNull(message = "accountPassword cannot be null.")
 	private String accountPassword;
 
-	@Column(name = "contact_number", columnDefinition = "jsonb")
-	@JdbcTypeCode(SqlTypes.JSON)
-	private Map<String, String> contactNumber;
-
 	@Column(name = "account_role", nullable = false)
 	@NotNull(message = "Roles cannot be null")
 	private String roles = "NONE";
@@ -76,16 +67,15 @@ public class UserAccount implements UserDetails {
 	@Column(nullable = false, name = "is_enabled")
 	private boolean isEnabled = false; // Default to enabled when account is created
 
-	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(name = "tokens", columnDefinition = "jsonb")
-	private UserTokens tokens;
+	@Column(name = "verification_token", columnDefinition = "text")
+	private String verificationToken;
 
-	public UserTokens getTokens() {
-		return tokens;
+	public String getVerificationToken() {
+		return verificationToken;
 	}
 
-	public void setTokens(UserTokens tokens) {
-		this.tokens = tokens;
+	public void setVerificationToken(String verificationToken) {
+		this.verificationToken = verificationToken;
 	}
 
 	@Override
@@ -127,13 +117,12 @@ public class UserAccount implements UserDetails {
 			@NotBlank(message = "First name is mandatory") String firstName,
 			@NotBlank(message = "Last name is mandatory") String lastName,
 			@NotNull(message = "accountPassword cannot be null.") String accountPassword,
-			Map<String, String> contactNumber, @NotNull(message = "Roles cannot be null") String roles, boolean isOwner,
+			@NotNull(message = "Roles cannot be null") String roles, boolean isOwner,
 			boolean partOfOrganization, UserAccountSettings accountSettings) {
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.accountPassword = accountPassword;
-		this.contactNumber = contactNumber;
 		this.roles = roles;
 		this.isOwner = isOwner;
 		this.partOfOrganization = partOfOrganization;
@@ -176,14 +165,6 @@ public class UserAccount implements UserDetails {
 		this.accountPassword = accountPassword;
 	}
 
-	public Map<String, String> getContactNumber() {
-		return contactNumber;
-	}
-
-	public void setContactNumber(Map<String, String> contactNumber) {
-		this.contactNumber = contactNumber;
-	}
-
 	public String getRoles() {
 		return roles;
 	}
@@ -214,6 +195,11 @@ public class UserAccount implements UserDetails {
 
 	public void setAccountSettings(UserAccountSettings accountSettings) {
 		this.accountSettings = accountSettings;
+	}
+
+	@Override
+	public String toString() {
+		return "UserAccount [email=" + email + ", isEnabled=" + isEnabled + ", roles=" + roles + "]";
 	}
 
 }

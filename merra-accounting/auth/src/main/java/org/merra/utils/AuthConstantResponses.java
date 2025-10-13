@@ -10,5 +10,10 @@ public class AuthConstantResponses {
 	// success
 	public static final String LOGIN_SUCCESSFUL = "Login successful";
 	public static final String ACCOUNT_CREATED = "Account created successfully";
-	private AuthConstantResponses() {}
+	// email verification
+	public static final String EMAIL_VERIFICATION = "Verification email sent.";
+	public static final String EMAIL_VERIFICATION_RESEND = "Verification email resent.";
+
+	private AuthConstantResponses() {
+	}
 }

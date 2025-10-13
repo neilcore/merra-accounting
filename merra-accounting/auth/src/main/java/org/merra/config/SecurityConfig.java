@@ -26,14 +26,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
-	
-	private final AuthEntrypointJwt unathorizedHandler;
-	private final AuthTokenFilter authTokenFilter;
+
+    private final AuthEntrypointJwt unathorizedHandler;
+    private final AuthTokenFilter authTokenFilter;
     private final HeaderFilter headerFilter;
-	private final CustomUserDetailsService customUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     public SecurityConfig(
-            AuthEntrypointJwt unathorizedHandler, 
+            AuthEntrypointJwt unathorizedHandler,
             AuthTokenFilter authTokenFilter,
             HeaderFilter headerFilter,
             CustomUserDetailsService customUserDetailsService) {
@@ -42,57 +42,59 @@ public class SecurityConfig {
         this.headerFilter = headerFilter;
         this.customUserDetailsService = customUserDetailsService;
     }
-	
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
-		return builder.getAuthenticationManager();
-	}
-	
+
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
+        return builder.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(customUserDetailsService);
         /* Tell AuthenticationProvider which UserDetailService to use */
         /*
          * Fetch information about the user
          * Provide a password on encoder
-         * */
+         */
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
-	
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     /*
      * This bean is used for method level security expressions.
-    */
+     */
     @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
         return new SecurityEvaluationContextExtension();
     }
-    
+
     /**
      * This bean is used for handling CORS
+     * 
      * @return - {@linkplain UrlBasedCorsConfigurationSource} object.
      */
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(@NonNull CorsRegistry registry) {
-				registry.addMapping("/**")
-				.allowedOrigins("http://localhost:4200")
-                .allowedHeaders("*")
-				.allowedMethods("*")
-				.allowCredentials(true);
-			}
-		};
-	}
-    
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:4200")
+                        .allowedHeaders("*")
+                        .allowedMethods("*")
+                        .allowCredentials(true);
+            }
+        };
+    }
+
     /**
      * This security filter chain method is used for the apis.
+     * 
      * @param http - accepts {@linkplain HttpSecurity} object.
      * @return - {@linkplain SecurityFilterChain} object.
      * @throws Exception
@@ -100,22 +102,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(request -> request
-            /*
-             * Allows all HTTP OPTIONS requests to any path without authentication.
-             * This is important for CORS preflight requests, which browsers send before actual API calls.
-            */
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers("/", "/api/auth/**", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
-            .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(unathorizedHandler))
-            // .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(headerFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(request -> request
+                        /*
+                         * Allows all HTTP OPTIONS requests to any path without authentication.
+                         * This is important for CORS preflight requests, which browsers send before
+                         * actual API calls.
+                         */
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/", "/req/**", "/api/auth/**", "/swagger-ui/**", "/api-docs/**",
+                                "/v3/api-docs/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unathorizedHandler))
+                // .headers(headers ->
+                // headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(headerFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

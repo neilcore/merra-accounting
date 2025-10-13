@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.merra.exception.EmailAlreadyEnabledException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -207,6 +208,16 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         public ResponseEntity<Object> entityExistsException(EntityExistsException ex) {
                 ApiError apiError = new ApiError(
                                 ex.getLocalizedMessage(), false, HttpStatus.CONFLICT, ex.getMessage());
+                return new ResponseEntity<Object>(
+                                apiError,
+                                new HttpHeaders(),
+                                apiError.getResponse());
+        }
+
+        @ExceptionHandler({ EmailAlreadyEnabledException.class })
+        public ResponseEntity<Object> emailAlreadyEnabledException(EmailAlreadyEnabledException ex) {
+                ApiError apiError = new ApiError(
+                                ex.getLocalizedMessage(), false, HttpStatus.BAD_REQUEST, ex.getMessage());
                 return new ResponseEntity<Object>(
                                 apiError,
                                 new HttpHeaders(),

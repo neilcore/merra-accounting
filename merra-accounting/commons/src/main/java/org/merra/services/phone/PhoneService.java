@@ -5,9 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.merra.embedded.PhoneDetails;
-import org.merra.exception.CountryNotFoundException;
 import org.merra.exception.PhoneTypeNotFoundException;
-import org.merra.services.CountryService;
 import org.springframework.stereotype.Service;
 
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -23,48 +21,41 @@ import jakarta.annotation.PostConstruct;
 public final class PhoneService implements PhoneServiceInterface {
 	private Set<String> phoneTypes;
 	private PhoneNumberUtil UTIL;
-	
-	private final CountryService countryService;
 
-	public PhoneService(CountryService countryService) {
-		this.countryService = countryService;
-	}
-	
 	@PostConstruct
 	private void init() {
 		phoneTypes = Set.of("DEFAULT", "DDI", "MOBILE", "FAX");
 		UTIL = PhoneNumberUtil.getInstance();
 	}
-	
+
 	private Boolean phoneTypeCheck(String type) {
-		if (phoneTypes.contains(type.toUpperCase())) return Boolean.TRUE;
+		if (phoneTypes.contains(type.toUpperCase()))
+			return Boolean.TRUE;
 		return Boolean.FALSE;
 	}
 
 	private PhoneNumber transformPhone(String phoneNo, String country) {
 		PhoneNumber parsedPhoneNumber = null;
-		
+
 		try {
 			parsedPhoneNumber = UTIL.parse(phoneNo, country);
 		} catch (NumberParseException e) {
 			System.err.println("NumberParseException was thrown: " + e.toString());
 		}
-		
+
 		return parsedPhoneNumber;
 	}
 
 	private PhoneNumber parsePhone(String number, String countryCode) {
-		if (!countryService.validateCountry(countryCode)) {
-			throw new CountryNotFoundException(countryCode);
-		}
 		return transformPhone(number, countryCode);
 	}
 
 	@Override
-	public LinkedHashSet<PhoneDetails> validatePhones(LinkedHashSet<PhoneDetails> phones,Optional<String> countryCode) {
+	public LinkedHashSet<PhoneDetails> validatePhones(LinkedHashSet<PhoneDetails> phones,
+			Optional<String> countryCode) {
 		LinkedHashSet<PhoneDetails> validatedPhones = new LinkedHashSet<>();
 		Optional<String> phoneCountryCode = countryCode;
-		
+
 		/**
 		 * Validate first the phone in the collection.
 		 * By default the first phone in the collection is the
@@ -74,42 +65,40 @@ public final class PhoneService implements PhoneServiceInterface {
 		if (!phoneTypeCheck(primaryPhone.getPhoneType())) {
 			throw new PhoneTypeNotFoundException(primaryPhone.getPhoneType());
 		}
-		
+
 		if (!primaryPhone.getPhoneCountryCode().isBlank()) {
 			phoneCountryCode = Optional.of(primaryPhone.getPhoneCountryCode());
 		}
-		
+
 		PhoneNumber parsedPrimaryPhone = parsePhone(primaryPhone.getPhoneNumber(), phoneCountryCode.get());
-		
+
 		validatedPhones.addFirst(new PhoneDetails(
 				primaryPhone.getPhoneType(),
 				String.valueOf(parsedPrimaryPhone.getNationalNumber()),
 				primaryPhone.getPhoneAreaCode(),
 				phoneCountryCode.get(),
-				Boolean.TRUE
-		));
-		
+				Boolean.TRUE));
+
 		/**
 		 * If there are multiple phones provided
 		 */
 		if (!phones.isEmpty()) {
-			for (PhoneDetails rphone: phones) {
+			for (PhoneDetails rphone : phones) {
 				if (!phoneTypeCheck(rphone.getPhoneType())) {
 					throw new PhoneTypeNotFoundException(rphone.getPhoneType());
 				}
-				
+
 				if (!rphone.getPhoneCountryCode().isBlank()) {
 					phoneCountryCode = Optional.of(rphone.getPhoneCountryCode());
 				}
-				
+
 				PhoneNumber parsedPhone = parsePhone(rphone.getPhoneNumber(), phoneCountryCode.get());
 				validatedPhones.add(new PhoneDetails(
 						rphone.getPhoneType(),
 						String.valueOf(parsedPhone.getNationalNumber()),
 						rphone.getPhoneAreaCode(),
 						phoneCountryCode.get(),
-						Boolean.FALSE
-				));
+						Boolean.FALSE));
 			}
 		}
 		return validatedPhones;

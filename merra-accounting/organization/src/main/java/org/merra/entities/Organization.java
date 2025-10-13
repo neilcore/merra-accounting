@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.merra.audit.CreatedDate;
-import org.merra.embedded.DefaultCurrency;
 import org.merra.embedded.PhoneDetails;
 import org.merra.entities.embedded.ExternalLinks;
 import org.merra.entities.embedded.OrganizationNameUpdate;
@@ -40,113 +39,105 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "organization", schema = "merra_schema")
 public class Organization {
 
-	@Id @GeneratedValue(strategy = GenerationType.UUID)
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
-	
+
 	@Column(name = "profile_image")
 	@NotNull(message = "profile_image")
 	private String profileImage;
-	
+
 	@ElementCollection
-	@CollectionTable(
-			schema = "merra_schema",
-			name = "organization_name_log",
-			joinColumns = {
-					@JoinColumn(name = "organization_id", referencedColumnName = "id", nullable = false)
-			})
+	@CollectionTable(schema = "merra_schema", name = "organization_name_log", joinColumns = {
+			@JoinColumn(name = "organization_id", referencedColumnName = "id", nullable = false)
+	})
 	private Set<OrganizationNameUpdate> nameDetailsUpdate;
-	
+
 	@ElementCollection
-	@CollectionTable(
-			schema = "merra_schema",
-			name = "organization_users",
-			joinColumns = {@JoinColumn(name = "organization_id", referencedColumnName = "id", nullable = false)})
+	@CollectionTable(schema = "merra_schema", name = "organization_users", joinColumns = {
+			@JoinColumn(name = "organization_id", referencedColumnName = "id", nullable = false) })
 	private Set<OrganizationUsers> organizationUsers;
-	
+
 	@ElementCollection
-	@CollectionTable(
-			schema = "merra_schema",
-			name = "org_invites",
-			joinColumns = {@JoinColumn(name = " organization_id", referencedColumnName = "id", nullable = false)})
+	@CollectionTable(schema = "merra_schema", name = "org_invites", joinColumns = {
+			@JoinColumn(name = " organization_id", referencedColumnName = "id", nullable = false) })
 	private Set<OrganizationUserInvites> organizationUserInvites;
-	
+
 	@Column(name = "display_name", nullable = false, unique = true)
 	@NotBlank(message = "displayName attribute cannot be blank.")
 	private String displayName;
-	
+
 	// The official legal name or trading name of the business
 	@Column(name = "legal_name", nullable = false, unique = true)
 	@NotBlank(message = "legalName cannot be blank.")
 	private String legalName;
-	
+
 	@Column(name = "organization_description")
 	private String organizationDescription;
-	
+
 	// e.g., "US", "AU", "NZ", "GB"
 	@Column(nullable = false)
 	@NotNull(message = "country attribute cannot be null.")
 	private String country;
-	
-	@Embedded
-	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(name = "default_currency", nullable = false, columnDefinition = "jsonb")
+
+	@Column(name = "default_currency", nullable = false)
 	@NotNull(message = "defaultCurrency attribute cannot be null.")
-	private DefaultCurrency defaultCurrency;
-	
+	private String defaultCurrency;
+
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "organization_type", nullable = false)
 	@NotNull(message = "organizationType attribute cannot be null.")
 	private OrganizationType organizationType;
-	
+
 	/* Contact Details */
 	@JdbcTypeCode(SqlTypes.JSON_ARRAY)
 	@Column(name = "phone_no", nullable = false, columnDefinition = "jsonb[]")
 	private LinkedHashSet<PhoneDetails> phoneNo;
-	
+
 	@Column(name = "email", nullable = false)
 	@NotBlank(message = "Email is mandatory")
 	@Email(message = "Email attribute should be valid")
 	private String email;
-	
+
 	private String website;
-	
-//	@OneToOne(fetch = FetchType.LAZY, mappedBy = "organization")
-//	private TaxDetails taxDetails;
-	
+
+	// @OneToOne(fetch = FetchType.LAZY, mappedBy = "organization")
+	// private TaxDetails taxDetails;
+
 	@NotBlank(message = "timeZone attribute is required.")
 	@Column(name = "time_zone")
 	private String timeZone;
-	
+
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(name = "financial_year", columnDefinition = "jsonb")
 	private Map<String, Integer> financialYear;
-	
+
 	@JdbcTypeCode(SqlTypes.JSON_ARRAY)
 	@Column(name = "address", nullable = false, columnDefinition = "jsonb[]")
 	@NotNull(message = "Address attribute cannot be null.")
 	private Set<Map<String, String>> address;
-	
+
 	@JdbcTypeCode(SqlTypes.JSON_ARRAY)
 	@Column(name = "external_links", columnDefinition = "jsonb[]")
 	private Set<ExternalLinks> externalLinks;
-	
+
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(name = "payment_terms")
 	@NotNull(message = "paymentTerms attribute cannot be null.")
 	private Map<String, String> paymentTerms;
-	
+
 	@Embedded
 	@AttributeOverride(name = "createdDate", column = @Column(name = "created_date", nullable = false))
 	private CreatedDate createdDate;
-	
+
 	// By default when an organization is created, it has an active subscription
 	@Column(name = "active_subscription", nullable = false)
 	private Boolean activeSubscription = true;
-	
+
 	@Column(name = "status", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status = Status.ACTIVE_ACCOUNT;
-	
+
 	public void setStatus(Status status) {
 		if (status != null) {
 			this.status = status;
@@ -154,33 +145,30 @@ public class Organization {
 			this.status = Status.ACTIVE_ACCOUNT;
 		}
 	}
-	
+
 	public void setActiveSubscription(Boolean isActiveSubscription) {
-		this.activeSubscription = isActiveSubscription == null ?
-				true : isActiveSubscription;
+		this.activeSubscription = isActiveSubscription == null ? true : isActiveSubscription;
 	}
-	
+
 	public void setBasicInformation(
 			String displayName,
 			String legalName,
 			OrganizationType organizationType,
-			String description
-	) {
+			String description) {
 		this.setDisplayName(displayName);
 		this.setLegalName(legalName);
 		this.setOrganizationType(organizationType);
 		this.setOrganizationDescription(description);
 	}
-	
+
 	public void setContactDetails(
 			String countryCode,
-			DefaultCurrency defaultCurrency,
+			String defaultCurrency,
 			Set<Map<String, String>> address,
 			LinkedHashSet<PhoneDetails> phones,
 			String email,
 			String website,
-			Set<ExternalLinks> externalLinks
-	) {
+			Set<ExternalLinks> externalLinks) {
 		this.setCountry(countryCode);
 		this.setDefaultCurrency(defaultCurrency);
 		this.setAddress(address);
@@ -199,7 +187,7 @@ public class Organization {
 			@NotBlank(message = "displayName attribute cannot be blank.") String displayName,
 			@NotBlank(message = "legalName cannot be blank.") String legalName, String organizationDescription,
 			@NotNull(message = "country attribute cannot be null.") String country,
-			@NotNull(message = "defaultCurrency attribute cannot be null.") DefaultCurrency defaultCurrency,
+			@NotNull(message = "defaultCurrency attribute cannot be null.") String defaultCurrency,
 			@NotNull(message = "organizationType attribute cannot be null.") OrganizationType organizationType,
 			LinkedHashSet<PhoneDetails> phoneNo,
 			@NotBlank(message = "Email is mandatory") @Email(message = "Email attribute should be valid") String email,
@@ -221,7 +209,7 @@ public class Organization {
 			@NotBlank(message = "displayName attribute cannot be blank.") String displayName,
 			@NotBlank(message = "legalName cannot be blank.") String legalName, String organizationDescription,
 			@NotNull(message = "country attribute cannot be null.") String country,
-			@NotNull(message = "defaultCurrency attribute cannot be null.") DefaultCurrency defaultCurrency,
+			@NotNull(message = "defaultCurrency attribute cannot be null.") String defaultCurrency,
 			@NotNull(message = "organizationType attribute cannot be null.") OrganizationType organizationType,
 			LinkedHashSet<PhoneDetails> phoneNo,
 			@NotBlank(message = "Email is mandatory") @Email(message = "Email attribute should be valid") String email,
@@ -322,11 +310,11 @@ public class Organization {
 		this.country = country;
 	}
 
-	public DefaultCurrency getDefaultCurrency() {
+	public String getDefaultCurrency() {
 		return defaultCurrency;
 	}
 
-	public void setDefaultCurrency(DefaultCurrency defaultCurrency) {
+	public void setDefaultCurrency(String defaultCurrency) {
 		this.defaultCurrency = defaultCurrency;
 	}
 
@@ -418,5 +406,4 @@ public class Organization {
 		return status;
 	}
 
-	
 }
