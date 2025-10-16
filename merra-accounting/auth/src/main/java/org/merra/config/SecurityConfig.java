@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -103,21 +104,24 @@ public class SecurityConfig {
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request
+                .authorizeHttpRequests(customizer -> customizer
                         /*
                          * Allows all HTTP OPTIONS requests to any path without authentication.
                          * This is important for CORS preflight requests, which browsers send before
                          * actual API calls.
                          */
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/", "/req/**", "/api/auth/**", "/swagger-ui/**", "/api-docs/**",
+                        .requestMatchers(
+                                HttpMethod.OPTIONS,
+                                "/**",
+                                "/api/auth/**",
+                                "/swagger-ui/**",
+                                "/api-docs/**",
                                 "/v3/api-docs/**")
                         .permitAll()
                         .anyRequest().authenticated())
+                .oauth2Login(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unathorizedHandler))
-                // .headers(headers ->
-                // headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(headerFilter, UsernamePasswordAuthenticationFilter.class);

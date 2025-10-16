@@ -11,9 +11,11 @@ import org.merra.service.AuthService;
 import org.merra.utils.AuthConstantResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -25,6 +27,18 @@ public class AuthController {
 
     public AuthController(AuthService authService) {
         this.authService = authService;
+    }
+
+    @GetMapping("req/signup/verify")
+    public ResponseEntity<ApiResponse> verifyEmail(@RequestParam("token") String tokenParam) {
+        var res = authService.verifyEmail(tokenParam);
+        ApiResponse apiRes = new ApiResponse(
+                "Email successfully verified",
+                true,
+                HttpStatus.CREATED,
+                res);
+
+        return ResponseEntity.ok(apiRes);
     }
 
     /**
