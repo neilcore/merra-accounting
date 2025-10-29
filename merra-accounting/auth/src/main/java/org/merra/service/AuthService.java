@@ -8,7 +8,7 @@ import org.merra.config.JwtUtils;
 import org.merra.dto.AuthResponse;
 import org.merra.dto.JwtTokens;
 import org.merra.dto.LoginRequest;
-import org.merra.dto.SignupRequest;
+import org.merra.dto.CreateAccountRequest;
 import org.merra.dto.TokenRequest;
 import org.merra.dto.VerificationResponse;
 import org.merra.dto.VerifiedAccountResponse;
@@ -32,14 +32,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.mail.internet.MimeMessage;
-
-import java.net.URI;
 import java.net.URL;
 
 @Service
@@ -200,7 +196,7 @@ public class AuthService {
         roles);
   }
 
-  public VerificationResponse signup(@NonNull SignupRequest request) {
+  public VerificationResponse signup(@NonNull CreateAccountRequest request) {
     Optional<UserAccount> findUserEmail = userRepository.findUserByEmailIgnoreCase(request.email());
 
     if (findUserEmail.isPresent()) {
@@ -218,12 +214,8 @@ public class AuthService {
       }
     }
     // throw new EntityExistsException(AuthConstantResponses.EMAIL_EXISTS);
-    UserAccount userBuilder = new UserAccount();
-    userBuilder.setFirstName(request.firstName());
-    userBuilder.setLastName(request.lastName());
-    userBuilder.setEmail(request.email());
-    userBuilder.setCountry(request.country());
-    userBuilder.setAccountPassword(passwordEncoder.encode(request.password()));
+    var encodedPassword = passwordEncoder.encode(request.password());
+    UserAccount userBuilder = new UserAccount(request.email(), encodedPassword);
 
     final String verificationEmailToken = jwtUtils.generateToken(userBuilder, verificationToken, false);
     userBuilder.setVerificationToken(verificationEmailToken);

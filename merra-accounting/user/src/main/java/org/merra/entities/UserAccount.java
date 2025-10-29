@@ -3,6 +3,8 @@ package org.merra.entities;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,18 +33,16 @@ public class UserAccount implements UserDetails {
 
 	@Column(nullable = false, unique = true, name = "email")
 	@Email(message = "Email should be valid")
+	@NotBlank(message = "email attribute cannot be blank.")
 	private String email;
 
-	@Column(name = "first_name", nullable = false)
-	@NotBlank(message = "First name is mandatory")
+	@Column(name = "first_name")
 	private String firstName;
 
-	@Column(name = "last_name", nullable = false)
-	@NotBlank(message = "Last name is mandatory")
+	@Column(name = "last_name")
 	private String lastName;
 
-	@Column(name = "account_password", nullable = false)
-	@NotNull(message = "accountPassword cannot be null.")
+	@Column(name = "account_password")
 	private String accountPassword;
 
 	@Column(name = "account_role", nullable = false)
@@ -53,9 +53,17 @@ public class UserAccount implements UserDetails {
 	@Column(name = "is_owner", nullable = false)
 	private boolean isOwner = false;
 
-	@Column(nullable = false)
-	@NotBlank(message = "country attribute cannot be blank.")
 	private String country;
+	@Column(name = "profile_url")
+	private String profileUrl;
+
+	public String getProfileUrl() {
+		return profileUrl;
+	}
+
+	public void setProfileUrl(String profileUrl) {
+		this.profileUrl = profileUrl;
+	}
 
 	// A user by default isn't part of any organization
 	@Column(name = "part_of_organization", nullable = false)
@@ -113,20 +121,9 @@ public class UserAccount implements UserDetails {
 	public UserAccount() {
 	}
 
-	public UserAccount(@Email(message = "Email should be valid") String email,
-			@NotBlank(message = "First name is mandatory") String firstName,
-			@NotBlank(message = "Last name is mandatory") String lastName,
-			@NotNull(message = "accountPassword cannot be null.") String accountPassword,
-			@NotNull(message = "Roles cannot be null") String roles, boolean isOwner,
-			boolean partOfOrganization, UserAccountSettings accountSettings) {
+	public UserAccount(@NonNull String email, String password) {
 		this.email = email;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.accountPassword = accountPassword;
-		this.roles = roles;
-		this.isOwner = isOwner;
-		this.partOfOrganization = partOfOrganization;
-		this.accountSettings = accountSettings;
+		this.accountPassword = password;
 	}
 
 	public UUID getUserId() {

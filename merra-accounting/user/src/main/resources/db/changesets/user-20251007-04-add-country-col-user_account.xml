@@ -16,7 +16,6 @@
             tableName="user_account"
         >
             <column name="country" type="varchar(255)">
-                <constraints  nullable="false"/>
             </column>
         </addColumn>
     </changeSet>

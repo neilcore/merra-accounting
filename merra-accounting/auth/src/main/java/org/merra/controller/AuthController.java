@@ -4,7 +4,7 @@ import org.merra.api.ApiResponse;
 import org.merra.dto.AuthResponse;
 import org.merra.dto.JwtTokens;
 import org.merra.dto.LoginRequest;
-import org.merra.dto.SignupRequest;
+import org.merra.dto.CreateAccountRequest;
 import org.merra.dto.TokenRequest;
 import org.merra.dto.VerificationResponse;
 import org.merra.service.AuthService;
@@ -60,8 +60,8 @@ public class AuthController {
     }
 
     @PostMapping("signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest signupRequest) {
-        VerificationResponse res = authService.signup(signupRequest);
+    public ResponseEntity<?> signup(@Valid @RequestBody CreateAccountRequest req) {
+        VerificationResponse res = authService.signup(req);
 
         ApiResponse response = new ApiResponse();
         if (res.resent()) {
