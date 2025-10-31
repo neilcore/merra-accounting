@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -15,14 +16,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
-import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
-import org.springframework.security.oauth2.server.resource.introspection.SpringOpaqueTokenIntrospector;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -33,30 +32,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
-    @Value("${spring.security.oauth2.resourceserver.opaquetoken.introspection-uri}")
-    private String introspectionUri;
-    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
-    private String clientId;
-    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
-    private String clientSecret;
-
-    private final WebClient userInfoClient;
+    // private final WebClient userInfoClient;
     private final AuthEntrypointJwt unAuthorizedHandler;
-    private final AuthTokenFilter authTokenFilter;
-    private final HeaderFilter headerFilter;
     private final CustomUserDetailsService customUserDetailsService;
+    private final AuthTokenFilter authTokenFilter;
 
     public SecurityConfig(
-            WebClient userInfoClient,
-            AuthEntrypointJwt unAuthorizedHandler,
             AuthTokenFilter authTokenFilter,
-            HeaderFilter headerFilter,
+            AuthEntrypointJwt unAuthorizedHandler,
             CustomUserDetailsService customUserDetailsService) {
-        this.userInfoClient = userInfoClient;
+        // this.userInfoClient = userInfoClient;
         this.unAuthorizedHandler = unAuthorizedHandler;
-        this.authTokenFilter = authTokenFilter;
-        this.headerFilter = headerFilter;
         this.customUserDetailsService = customUserDetailsService;
+        this.authTokenFilter = authTokenFilter;
     }
 
     @Bean
@@ -138,17 +126,11 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(
-                        customizer -> customizer.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint()))
+                        customizer -> customizer.authenticationEntryPoint(unAuthorizedHandler))
                 .authenticationProvider(authenticationProvider())
-                .oauth2ResourceServer(customizer -> customizer.opaqueToken(Customizer.withDefaults()))
                 .addFilterBefore(authTokenFilter,
                         UsernamePasswordAuthenticationFilter.class);
-        // .addFilterBefore(headerFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-    @Bean
-    public OpaqueTokenIntrospector introspector() {
-        return new GoogleOpaqueTokenIntrospector(userInfoClient);
-    }
 }

@@ -8,6 +8,7 @@ import org.merra.config.JwtUtils;
 import org.merra.dto.AuthResponse;
 import org.merra.dto.JwtTokens;
 import org.merra.dto.LoginRequest;
+import org.merra.dto.ResendEmailVerification;
 import org.merra.dto.CreateAccountRequest;
 import org.merra.dto.TokenRequest;
 import org.merra.dto.VerificationResponse;
@@ -36,6 +37,8 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.mail.internet.MimeMessage;
+import jakarta.persistence.EntityNotFoundException;
+
 import java.net.URL;
 
 @Service
@@ -228,6 +231,25 @@ public class AuthService {
      */
     userAccountService.createUserAccountSetting(newUser);
     return new VerificationResponse(false, verificationEmailToken);
+  }
+
+  public VerificationResponse resendEmailVerification(@NonNull ResendEmailVerification request) {
+    Optional<UserAccount> findUser = userRepository.findById(request.userId());
+
+    if (findUser.isEmpty()) {
+      throw new EntityNotFoundException("User not found.");
+    }
+
+    UserAccount user = findUser.get();
+    if (user.isEnabled()) {
+      throw new EmailAlreadyEnabledException("Email is already verified.");
+    }
+
+    final String newVerificationToken = jwtUtils.generateToken(user, verificationToken, false);
+    user.setVerificationToken(newVerificationToken);
+    userRepository.save(user);
+    sendVerificationEmail(user.getEmail(), newVerificationToken);
+    return new VerificationResponse(true, newVerificationToken);
   }
 
   public JwtTokens tokens(@NonNull TokenRequest request) {

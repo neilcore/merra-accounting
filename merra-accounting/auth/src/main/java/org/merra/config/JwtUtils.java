@@ -1,5 +1,6 @@
 package org.merra.config;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,7 +13,6 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -94,18 +94,12 @@ public class JwtUtils {
     }
 
     private Claims extractAllClaims(String token) {
-
-        try {
-            return Jwts
-                    .parser()
-                    .verifyWith(getSignInKey())
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-        } catch (JwtException e) {
-            throw new IllegalArgumentException("Invalid JWT token ", e);
-        }
-
+        return Jwts
+                .parser()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     private SecretKey getSignInKey() {

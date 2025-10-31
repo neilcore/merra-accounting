@@ -5,9 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@Component
 public class WebClientConfig {
-    @Value("${spring.security.oauth2.resourceserver.opaquetoken.introspection-uri}")
+    // @Value("${spring.security.oauth2.resourceserver.opaquetoken.introspection-uri}")
     private String introspectorUri;
 
     @Bean
