@@ -213,7 +213,7 @@ public class AuthService {
         user.setVerificationToken(userTokens);
         sendVerificationEmail(user.getEmail(), resetToken);
         userRepository.save(user);
-        return new VerificationResponse(true, resetToken);
+        return new VerificationResponse(true, resetToken, user.getUserId());
       }
     }
     // throw new EntityExistsException(AuthConstantResponses.EMAIL_EXISTS);
@@ -230,7 +230,7 @@ public class AuthService {
      * create it's account settings
      */
     userAccountService.createUserAccountSetting(newUser);
-    return new VerificationResponse(false, verificationEmailToken);
+    return new VerificationResponse(false, verificationEmailToken, newUser.getUserId());
   }
 
   public VerificationResponse resendEmailVerification(@NonNull ResendEmailVerification request) {
@@ -249,7 +249,7 @@ public class AuthService {
     user.setVerificationToken(newVerificationToken);
     userRepository.save(user);
     sendVerificationEmail(user.getEmail(), newVerificationToken);
-    return new VerificationResponse(true, newVerificationToken);
+    return new VerificationResponse(true, newVerificationToken, user.getUserId());
   }
 
   public JwtTokens tokens(@NonNull TokenRequest request) {
